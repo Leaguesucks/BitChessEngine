@@ -1,3 +1,5 @@
+/* The Bit representation of the chess board*/
+
 #ifndef _BITBOARD_H_
 #define _BITBOARD_H_
 
@@ -29,7 +31,7 @@ typedef struct {
     U64 bRooks;
     U64 bQueens;
     U64 bKing;
-} BitPiece;
+} BitBoard;
 
 
 #endif
