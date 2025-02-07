@@ -1,16 +1,58 @@
-/* The Bit representation of the chess board*/
+/* The Bit representation of the chess board 
+ *
+ * Here, the chess board is represented by a 64 bits unsigned int, the index
+ * of each square is mapped from right to left, bottom to top
+ * 
+ * NOTE: The functions declared in this header file are EXTREMELY UNSAFE to trade off
+ * for performance. Use these functions with through error checkings beforehand
+ */
 
 #ifndef _BITBOARD_H_
 #define _BITBOARD_H_
 
-#define BLACK 0
-#define WHITE 1
+// 0b 0000 0000 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_PAWNS    0x00ff000000000000
+// 0b 1000 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_ROOKS    0x8100000000000000
+// 0b 0100 0010 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_KNIGHTS  0x4200000000000000
+// 0b 0010 0100 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_BISHOPS  0x2400000000000000
+// 0b 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_QUEEN    0x1000000000000000
+// 0b 0000 1000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_KING     0x0800000000000000
+// 0b 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_ALL      0xff00000000000000
 
-#define RIGHT 0
-#define LEFT  1
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111 0000 0000
+#define INIT_WHITE_PAWNS    0x000000000000ff00
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1000 0001
+#define INIT_WHITE_ROOKS    0x0000000000000081
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0100 0010
+#define INIT_WHITE_KNIGHTS  0x0000000000000042
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0010 0100
+#define INIT_WHITE_BISHOPS  0x0000000000000024
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0000
+#define INIT_WHITE_QUEEN    0x0000000000000010
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1000
+#define INIT_WHITE_KING     0x0000000000000008
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111
+#define INIT_WHITE_ALL      0x00000000000000ff
 
-#define UP    0
-#define DOWN  1
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111 0000 0000 0000 0000 0000 0000
+#define INIT_WHITE_ENPASSEN 0x00000000ff000000
+// 0b 0000 0000 0000 0000 0000 0000 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_ENPASSEN 0x000000ff00000000
+
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0010 0010
+#define INIT_WHITE_CASTLE   0x0000000000000022
+// 0b 0010 0010 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_CASTLE   0x2200000000000000
+
+/* Defines the edges of the board */
+#define ROW_RIGHT_EDGE      0x0000000000000001
+#define ROW_LEFT_EDGE       0x0000000000000010
 
 typedef unsigned char      U8 ;
 typedef unsigned short int U16;
@@ -22,16 +64,267 @@ typedef struct {
     U64 wKnights;
     U64 wBishops;
     U64 wRooks;
-    U64 wQueens;
+    U64 wQueen;
     U64 wKing;
 
     U64 bPawns;
     U64 bKnights;
     U64 bBishops;
     U64 bRooks;
-    U64 bQueens;
+    U64 bQueen;
     U64 bKing;
+
+    U64 wENPASSEN;
+    U64 bENPASSEN;
+
+    U64 wPins;
+    U64 bPins;
+
+    U64 wPawnsAttack;
+    U64 wRooksAttack;
+    U64 wKnightsAttack;
+    U64 wBishopsAttack;
+    U64 wQueenAttack;
+    U64 wKingAttack;
+
+    U64 bPawnsAttack;
+    U64 bRooksAttack;
+    U64 bKnightsAttack;
+    U64 bBishopsAttack;
+    U64 bQueenAttack;
+    U64 bKingAttack;
+
+    /* Pawns is the only pieces that move different that attack -> Need another variable to store their movement */
+    U64 wPawnsMove;
+    U64 bPawnsMove;
+
+    U64 wCastle;
+    U64 bCastle;
+
+    U64 wAll; // White all pieces
+    U64 bAll; // Black all pieces
+
+    U8 wKingBeingChecked;
+    U8 bKingBeingChecked;
+
 } BitBoard;
 
+typedef enum {
+    LEFT     ,
+    RIGHT    ,
+    UP       ,
+    DOWN     ,
+    UPLEFT   ,
+    UPRIGHT  ,
+    DOWNLEFT ,
+    DOWNRIGHT,
+} Direction;
+
+typedef enum {
+    BLACK,
+    WHITE
+} Side;
+
+typedef enum {
+    FRIEND_COLLISION,
+    ENEMY_COLLISION ,
+    NO_COLLISION
+} Collision;
+
+/* Initialize the bit board. Should be called first to start a new game 
+ * Para:
+ *      b -> The bit board
+ */
+void init_board(BitBoard* b) {
+    b->wPawns            = INIT_WHITE_PAWNS   ;
+    b->wRooks            = INIT_WHITE_ROOKS   ;
+    b->wKnights          = INIT_WHITE_KNIGHTS ;
+    b->wBishops          = INIT_WHITE_BISHOPS ;
+    b->wQueen            = INIT_WHITE_QUEEN   ;
+    b->wKing             = INIT_WHITE_KING    ;
+
+    b->bPawns            = INIT_BLACK_PAWNS   ;
+    b->bRooks            = INIT_BLACK_ROOKS   ;
+    b->bKnights          = INIT_BLACK_KNIGHTS ;
+    b->bBishops          = INIT_BLACK_BISHOPS ;
+    b->bQueen            = INIT_BLACK_QUEEN   ;
+    b->bKing             = INIT_BLACK_KING    ;
+
+    b->wENPASSEN         = INIT_WHITE_ENPASSEN;
+    b->bENPASSEN         = INIT_BLACK_ENPASSEN;
+
+    b->wCastle           = INIT_WHITE_CASTLE  ;
+    b->bCastle           = INIT_BLACK_CASTLE  ;
+
+    b->wAll              = INIT_WHITE_ALL     ;
+    b->bAll              = INIT_BLACK_ALL     ;
+
+    b->wPins             = 0                  ;
+    b->bPins             = 0                  ;
+
+    b->wPawnsAttack      = 0                  ;
+    b->wRooksAttack      = 0                  ;
+    b->wKnightsAttack    = 0                  ;
+    b->wBishopsAttack    = 0                  ;
+    b->wQueenAttack      = 0                  ;
+    b->wKingAttack       = 0                  ;
+
+    b->bPawnsAttack      = 0                  ;
+    b->bRooksAttack      = 0                  ;
+    b->bKnightsAttack    = 0                  ;
+    b->bBishopsAttack    = 0                  ;
+    b->bQueenAttack      = 0                  ;
+    b->bKingAttack       = 0                  ;
+
+    b->wPawnsMove        = 0                  ;
+    b->bPawnsMove        = 0                  ;
+
+    b->wKingBeingChecked = 0                  ;
+    b->bKingBeingChecked = 0                  ;
+}
+
+/* Find the row number based on a position
+ * This function is UNSAFE
+ *
+ * Para: 
+ *      The current position
+ * 
+ * Return: 
+ *      The row num
+ */
+int FindRow(U64 pos) {
+    int row = 0;
+
+    while (!(pos<<row >= ROW_RIGHT_EDGE<<row && pos<<row <= ROW_LEFT_EDGE<<row))
+        row++;
+
+    return row;
+}
+
+/* Map one position to another by moving it either left/right or up/down 
+ * Para:
+ *      pos -> Current position
+ *      dir -> Direction to move to
+ *      sq  -> How many squares to move in that direction
+ * 
+ * Direction:
+ *      LEFT, RIGHT, UP, DOWN, UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT
+ * 
+ * Return:
+ *      New position, 0 if cannot move in that direction
+ */
+U64 MoveTo(U64 pos, Direction dir, U32 sq) {
+    int row = FindRow(pos);
+    U64 newpos;
+    
+    switch (dir) {
+        case LEFT:
+            newpos = pos<<sq;
+            if (newpos > ROW_LEFT_EDGE<<row) return 0; // Hit the left edge
+            return newpos;
+
+        case RIGHT:
+            newpos = pos>>sq;
+            if (newpos < ROW_RIGHT_EDGE<<row) return 0; // Hit the right edge
+            return newpos;
+
+        case UP:
+            newpos = pos<<(8*sq);
+            return newpos;
+
+        case DOWN:
+            newpos = pos>>(8*sq);
+            return newpos;
+
+        case UPLEFT:
+            newpos = pos<<sq;
+            if (newpos > ROW_LEFT_EDGE<<row) return 0; // Hit the left edge
+            newpos <<= (8*sq);
+            return newpos;
+
+        case UPRIGHT:
+            newpos = pos>>sq;
+            if (newpos < ROW_RIGHT_EDGE<<row) return 0; // Hit the right edge
+            newpos <<= (8*sq);
+            return newpos;
+
+        case DOWNLEFT:
+            newpos = pos<<sq;
+            if (newpos > ROW_LEFT_EDGE<<row) return 0; // Hit the left edge
+            newpos >>= (8*sq);
+            return newpos;
+
+        case DOWNRIGHT:
+            newpos = pos>>sq;
+            if (newpos < ROW_RIGHT_EDGE<<row) return 0; // Hit the right edge
+            newpos >>= (8*sq);
+            return newpos;
+
+        default:
+            return 0;
+    }
+}
+
+/* Check if a position collides with an allied or an enemy 
+ *
+ * Para:
+ *      b -> The bit board
+ *      p -> Position of interest
+ *      s -> The side to play: BLACK or WHITE
+ * 
+ * Return:
+ *      Collision type: FRIEND_COLLISION, ENEMY_COLLISION or NO_COLLISION
+ */
+Collision CheckCollision(BitBoard *b, U64 p, Side s) {
+    switch (s) {
+        case WHITE:
+            if (p & b->wAll) { return FRIEND_COLLISION; }
+            if (p & b->bAll) { return ENEMY_COLLISION ; }
+                               return NO_COLLISION    ;
+
+        case BLACK:
+            if (p & b->bAll) { return FRIEND_COLLISION; }
+            if (p & b->wAll) { return ENEMY_COLLISION ; }
+                               return NO_COLLISION    ;
+
+        default:
+            return NO_COLLISION;
+    }
+}
+
+/* Calculate all possible move for the pawns 
+ *
+ * Para:
+ *      b -> The bit board
+ *      p -> Current position of the pawn
+ *      s -> The side to play: BLACK or WHITE
+ * 
+ * Return:
+ *      It will store all possible pawn move back to the bit board
+ */
+void PawnMove(BitBoard *b, U64 p, Side s) {
+    U64 newpos = 0;
+    switch (s) {
+        case WHITE:
+            if ((newpos = MoveTo(p, UP, 1)) == 0) return;
+            if (CheckCollision(b, newpos, s) != NO_COLLISION) return;
+            b->wPawnsMove ^= newpos;
+            if (!(b->wPawns & INIT_WHITE_PAWNS)) return;
+            if ((newpos = MoveTo(p, UP, 2)) == 0) return;
+            if (CheckCollision(b, newpos, s) != NO_COLLISION) return;
+            b->wPawnsMove ^= newpos;
+            return;
+
+        case BLACK:
+            if ((newpos = MoveTo(p, DOWN, 1)) == 0) return;
+            if (CheckCollision(b, newpos, s) != NO_COLLISION) return;
+            b->bPawnsMove ^= newpos;
+            if (!(b->bPawns & INIT_BLACK_PAWNS)) return;
+            if ((newpos = MoveTo(p, DOWN, 2)) == 0) return;
+            if (CheckCollision(b, newpos, s) != NO_COLLISION) return;
+            b->bPawnsMove ^= newpos;
+            return;
+    }
+}
 
 #endif
