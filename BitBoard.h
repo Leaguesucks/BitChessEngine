@@ -10,49 +10,54 @@
 #ifndef _BITBOARD_H_
 #define _BITBOARD_H_
 
+#include <math.h>
+
 // 0b 0000 0000 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_PAWNS    0x00ff000000000000
+#define INIT_BLACK_PAWNS    0x00ff000000000000UL
 // 0b 1000 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_ROOKS    0x8100000000000000
+#define INIT_BLACK_ROOKS    0x8100000000000000UL
 // 0b 0100 0010 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_KNIGHTS  0x4200000000000000
+#define INIT_BLACK_KNIGHTS  0x4200000000000000UL
 // 0b 0010 0100 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_BISHOPS  0x2400000000000000
+#define INIT_BLACK_BISHOPS  0x2400000000000000UL
 // 0b 0001 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_QUEEN    0x1000000000000000
+#define INIT_BLACK_QUEEN    0x1000000000000000UL
 // 0b 0000 1000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_KING     0x0800000000000000
-// 0b 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_ALL      0xff00000000000000
+#define INIT_BLACK_KING     0x0800000000000000UL
+// 0b 1111 1111 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+#define INIT_BLACK_ALL      0xffff000000000000UL
 
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111 0000 0000
-#define INIT_WHITE_PAWNS    0x000000000000ff00
+#define INIT_WHITE_PAWNS    0x000000000000ff00UL
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1000 0001
-#define INIT_WHITE_ROOKS    0x0000000000000081
+#define INIT_WHITE_ROOKS    0x0000000000000081UL
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0100 0010
-#define INIT_WHITE_KNIGHTS  0x0000000000000042
+#define INIT_WHITE_KNIGHTS  0x0000000000000042UL
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0010 0100
-#define INIT_WHITE_BISHOPS  0x0000000000000024
+#define INIT_WHITE_BISHOPS  0x0000000000000024UL
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0001 0000
-#define INIT_WHITE_QUEEN    0x0000000000000010
+#define INIT_WHITE_QUEEN    0x0000000000000010UL
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1000
-#define INIT_WHITE_KING     0x0000000000000008
-// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111
-#define INIT_WHITE_ALL      0x00000000000000ff
-
-// 0b 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111 0000 0000 0000 0000 0000 0000
-#define INIT_WHITE_ENPASSEN 0x00000000ff000000
-// 0b 0000 0000 0000 0000 0000 0000 1111 1111 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_ENPASSEN 0x000000ff00000000
+#define INIT_WHITE_KING     0x0000000000000008UL
+// 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 1111 1111 1111 1111
+#define INIT_WHITE_ALL      0x000000000000ffffUL
 
 // 0b 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0010 0010
-#define INIT_WHITE_CASTLE   0x0000000000000022
+#define INIT_WHITE_CASTLE   0x0000000000000022UL
 // 0b 0010 0010 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
-#define INIT_BLACK_CASTLE   0x2200000000000000
+#define INIT_BLACK_CASTLE   0x2200000000000000UL
 
 /* Defines the edges of the board */
-#define ROW_RIGHT_EDGE      0x0000000000000001
-#define ROW_LEFT_EDGE       0x0000000000000010
+#define ROW_RIGHT_EDGE      0x0000000000000001UL
+#define ROW_LEFT_EDGE       0x0000000000000080UL
+
+/* Absolute weight of the pieces, can be used to identify the pieces' identity as well */
+#define PAWN   1.0f
+#define ROOK   5.0f
+#define KNIGHT 3.0f
+#define BISHOP 3.25f
+#define QUEEN  9.0f
+#define KING   INFINITY
 
 typedef unsigned char      U8 ;
 typedef unsigned short int U16;
@@ -74,8 +79,7 @@ typedef struct {
     U64 bQueen;
     U64 bKing;
 
-    U64 wENPASSEN;
-    U64 bENPASSEN;
+    U64 enPassen;
 
     U64 wPins;
     U64 bPins;
@@ -109,7 +113,7 @@ typedef struct {
 
 } BitBoard;
 
-typedef enum {
+typedef enum Direction {
     LEFT     ,
     RIGHT    ,
     UP       ,
@@ -120,12 +124,12 @@ typedef enum {
     DOWNRIGHT,
 } Direction;
 
-typedef enum {
+typedef enum Side {
     BLACK,
     WHITE
 } Side;
 
-typedef enum {
+typedef enum Collison_Type {
     FRIEND_COLLISION,
     ENEMY_COLLISION ,
     NO_COLLISION
@@ -150,14 +154,13 @@ void init_board(BitBoard* b) {
     b->bQueen            = INIT_BLACK_QUEEN   ;
     b->bKing             = INIT_BLACK_KING    ;
 
-    b->wENPASSEN         = INIT_WHITE_ENPASSEN;
-    b->bENPASSEN         = INIT_BLACK_ENPASSEN;
-
     b->wCastle           = INIT_WHITE_CASTLE  ;
     b->bCastle           = INIT_BLACK_CASTLE  ;
 
     b->wAll              = INIT_WHITE_ALL     ;
     b->bAll              = INIT_BLACK_ALL     ;
+
+    b->enPassen          = 0                  ;
 
     b->wPins             = 0                  ;
     b->bPins             = 0                  ;
@@ -190,13 +193,14 @@ void init_board(BitBoard* b) {
  *      The current position
  * 
  * Return: 
- *      The row num
+ *      The row num (index from 0-7)
  */
 int FindRow(U64 pos) {
-    int row = 0;
+    int row   = 0;
+    U64 rowEnd   = 128UL;
 
-    while (!(pos<<row >= ROW_RIGHT_EDGE<<row && pos<<row <= ROW_LEFT_EDGE<<row))
-        row++;
+    int division;
+    while ((division = (pos>>(row*8))/rowEnd > 0) && division != 1) row++;
 
     return row;
 }
@@ -217,15 +221,18 @@ U64 MoveTo(U64 pos, Direction dir, U32 sq) {
     int row = FindRow(pos);
     U64 newpos;
     
+    const U64 RightEdge = ROW_RIGHT_EDGE;
+    const U64 LeftEdge = ROW_LEFT_EDGE;
+
     switch (dir) {
         case LEFT:
             newpos = pos<<sq;
-            if (newpos > ROW_LEFT_EDGE<<row) return 0; // Hit the left edge
+            if (newpos > LeftEdge<<row) return 0; // Hit the left edge
             return newpos;
 
         case RIGHT:
             newpos = pos>>sq;
-            if (newpos < ROW_RIGHT_EDGE<<row) return 0; // Hit the right edge
+            if (newpos < RightEdge<<row) return 0; // Hit the right edge
             return newpos;
 
         case UP:
@@ -238,13 +245,13 @@ U64 MoveTo(U64 pos, Direction dir, U32 sq) {
 
         case UPLEFT:
             newpos = pos<<sq;
-            if (newpos > ROW_LEFT_EDGE<<row) return 0; // Hit the left edge
+            if (newpos > LeftEdge<<row) return 0; // Hit the left edge
             newpos <<= (8*sq);
             return newpos;
 
         case UPRIGHT:
             newpos = pos>>sq;
-            if (newpos < ROW_RIGHT_EDGE<<row) return 0; // Hit the right edge
+            if (newpos < RightEdge<<row) return 0; // Hit the right edge
             newpos <<= (8*sq);
             return newpos;
 

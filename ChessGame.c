@@ -1,21 +1,16 @@
-/* A chess game on STDIN/OUT that used to test the chess engine and 
- * the bit board representation
- */
-
-#include "Physical_Board.h"
-
-BitBoard board;
+#include "ChessGame.h"
 
 int main(int argv, char *argc[]) {
     init_board(&board);
+    Side2Play = WHITE;
+    in = stdin;
+    out = stdout;
 
-    PrintBoard(&board, stdout);
+    PrintBoard(&board, NULL);
 
-    char *request = malloc(100*sizeof(char));
-
-   while (1) {
-
-   }
+    while (1) {
+        GetRequest();
+    }
 
     return 0;
 }
