@@ -7,10 +7,10 @@ U64 SetBit(U64 b, int ns, ...) {
     va_start(args, ns);
 
     for (int i = 0; i < ns; i++) {
-        Square s = va_arg(args, Square);
-        b |= (REVERSE_ONE >> s);
+        int square = va_arg(args, int);
+        b |= (REVERSE_ONE >> square);
     }
-    
+
     va_end(args);
     return b;
 }
