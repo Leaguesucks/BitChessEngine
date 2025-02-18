@@ -13,8 +13,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "DataBase.h"
-
+#define REVERSE_ONE 0x8000000000000000ULL
 
 typedef unsigned char   U8;
 typedef unsigned short U16;
@@ -30,6 +29,7 @@ typedef enum Square {
     A3, B3, C3, D3, E3, F3, G3, H3,
     A2, B2, C2, D2, E2, F2, G2, H2,
     A1, B1, C1, D1, E1, F1, G1, H1,
+    NOT_A_SQUARE
 } Square;
 
 typedef struct BitBoard {
@@ -50,15 +50,5 @@ typedef struct BitBoard {
     U64 bKing;
     
 } BitBoard;
-
-/* Set the correspond bit to a square on a U64 number 
- *
- * Para: b -> The U64 number to set
- *       ns  -> Number of bit to set == length of s
- *       ... -> The masked square e.g., A1, A2, ...
- * 
- * Return: An U64 number with corresponding masked bit
- */
-U64 SetBit(U64 b, int ns, ...);
 
 #endif

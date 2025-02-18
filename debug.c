@@ -1,15 +1,19 @@
 /* Debug program for the bitboard */
 
-#include "BitBoard.h"
 #include "debug.h"
 
 int main(void) {
     U64 b = 0ULL;
-    b = SetBit(b, 1, A1);
-    FILE *f = fopen("RookAttackDebug.txt", "w");
-    PrintRookAttack(f);
+    b = SetBit(b, 1, E4);
+    //b = PopBit(b, 3, A1, A3, A5);
 
-    //PrintBoard(0x000202020202027CULL, stdout);
+    //PrintBoard(b, stdout);
+    for (int i = 0; i < 64; i++) {
+        PrintBoard(b, stdout);
+        PrintBoard(GetBlockedRookAttacks(b, i), stdout);
+        printf("%s\n", squares[i]);
+        getchar();
+    }
 
     return 0;
 }
