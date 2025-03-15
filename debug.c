@@ -9,10 +9,12 @@ int main(void) {
 
     //PrintBoard(b, stdout);
     for (int i = 0; i < 64; i++) {
-        PrintBoard(b, stdout);
-        PrintBoard(GetBlockedRookAttacks(b, i), stdout);
-        printf("%s\n", squares[i]);
-        getchar();
+        //PrintBoard(b, stdout);
+        //PrintBoard(GetBlockedRookAttacks(b, i), stdout);
+        //printf("%s\n", squares[i]);
+        //getchar();
+
+        //printf("%d %d\n", NUM_BISHOP_RELEVANT_SQUARES[i], NUM_ROOK_RELEVANT_SQUARES[i]);
     }
 
     return 0;

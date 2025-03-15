@@ -7,7 +7,7 @@
 
 /* Set the correspond bit to a square on the bitboard
  *
- * Para: b -> The bitboard
+ * Para: b   -> The bitboard
  *       ns  -> Number of bit to set == length of s
  *       ... -> The masked square e.g., A1, A2, ...
  * 
@@ -17,8 +17,8 @@ U64 SetBit(U64 b, int ns, ...);
 
 /* Return and remove the bit at a given square on the bitboard 
  *
- * Para: b -> The bitboard
- *       ns -> Number of square bit to pop
+ * Para: b   -> The bitboard
+ *       ns  -> Number of square bit to pop
  *       ... -> The squares to pop e.g., A1, A2, ...
  * 
  * Return: A new bit board with the chosen bits poped
@@ -36,7 +36,7 @@ U8 GetBit(U64 b, Square sq);
 
 /* Count the number of interested bits (0 or 1) in a given bitboard 
  *
- * Para: b -> The bit board
+ * Para: b   -> The bit board
  *       Bit -> 0 or 1: The interested bit
  * 
  * Return: Number of interested bits in the bitboard
@@ -45,7 +45,7 @@ U8 CountBits(U64 b, U8 Bit);
 
 /* Return the LSB Square that has been set to Bit
  *
- * Para: b -> The bitboard
+ * Para: b   -> The bitboard
  *       Bit -> The interested set bit
  * 
  * Return: The LSB square that has been set to 1

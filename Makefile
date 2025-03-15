@@ -1,5 +1,10 @@
-debugexe: debug
-	./debug
+all: magic debug
+
+magic: magic.o BitManipulation.o DataBase.o
+	gcc -Wall -g magic.o BitManipulation.o DataBase.o -o magic -lm
+
+magic.o: MagicGen.c MagicGen.h
+	gcc -Wall -g -c MagicGen.c -o magic.o
 
 debug: debug.o BitManipulation.o DataBase.o
 	gcc -Wall -g debug.o BitManipulation.o DataBase.o -o debug -lm
@@ -14,7 +19,7 @@ BitManipulation.o: BitManipulation.c BitManipulation.h
 	gcc -Wall -g -c BitManipulation.c -o BitManipulation.o
 
 clean:
-	rm *.o debug
+	rm *.o debug magic
 
 cleantxt:
-	rm RookAttackDebug.txt
+	rm *.txt

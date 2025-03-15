@@ -1,8 +1,10 @@
-/* Contains PreComputed Attacks Tables. How the lookup tables work with magic numbers to help 
- * calculating the slider pieces move can be found here:
- * 
- * https://www.chessprogramming.org/Magic_Bitboards
- * https://analog-hors.github.io/site/magic-bitboards/
+/* Contains PreComputed Attacks Tables and helper functions
+ * How the lookup tables work with magic numbers to help calculating the slider pieces move can be
+ * found here:
+ *
+ * COPYRIGHT:  
+ *      https://www.chessprogramming.org/Magic_Bitboards
+ *      https://analog-hors.github.io/site/magic-bitboards/
  */
 
 #ifndef _DATABASE_H_
@@ -11,50 +13,31 @@
 #include "BitBoard.h"
 #include "BitManipulation.h"
 
-/* Number of relevant squares for each square the bishop resides in
- * More informations at:
- *
- * https://www.chessprogramming.org/Magic_Bitboards
- * https://analog-hors.github.io/site/magic-bitboards/
- * 
- */
-const U8 NUM_BISHOP_RELEVANT_SQUARES[64] =
-{
-    6, 5, 5, 5, 5, 5, 5, 6,
-    5, 5, 5, 5, 5, 5, 5, 5,
-    5, 5, 7, 7, 7, 7, 5, 5,
-    5, 5, 7, 9, 9, 7, 5, 5,
-    5, 5, 7, 9, 9, 7, 5, 5,
-    5, 5, 7, 7, 7, 7, 5, 5,
-    5, 5, 5, 5, 5, 5, 5, 5,
-    6, 5, 5, 5, 5, 5, 5, 6
-};
+/* Number of relevant squares for each square the bishop resides in */
+extern const U8 NUM_BISHOP_RELEVANT_SQUARES[64];
 
-/* Number of relevant squares for each square the rook resides in
- * More informations at:
- *
- * https://www.chessprogramming.org/Magic_Bitboards
- * https://analog-hors.github.io/site/magic-bitboards/
- * 
+/* Number of relevant squares for each square the rook resides in */
+extern const U8 NUM_ROOK_RELEVANT_SQUARES[64];
+
+/* Magic number that to generate an index to access the rook attacks lookup table. This is 
+ * created by MagicGen.c
  */
-const U8 NUM_ROOK_RELEVANT_SQUARES[64] =
-{
-    12, 11, 11, 11, 11, 11, 11, 12,
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11,
-    11, 10, 10, 10, 10, 10, 10, 11,
-    12, 11, 11, 11, 11, 11, 11, 12
-};
+extern const U64 Rook_Magic_Numbers[64];
+
+/* Magic number that to generate an index to access the bishop attacks lookup table. This is 
+ * created by MagicGen.c
+ */
+extern const U64 Bishop_Magic_Numbers[64];
+
+/* All possible attacks of each square of the bishop */
+extern U64 Bishop_Attacks[64][512];
+
+/* All possible attacks of each square of the rook */
+extern U64 Rook_Attacks[64][4096];
 
 /* Generate all relevant possible bishop attacks on a given square. The 'relevant' means we generate
- * all bishop attacks on an empty board, except the edges. More informations can be found here:
+ * all bishop attacks on an empty board, except the edges
  *
- * https://www.chessprogramming.org/Magic_Bitboards
- * https://analog-hors.github.io/site/magic-bitboards/
- * 
  * Para: sq -> The square which the bishop resides on
  * 
  * Return: All relevant possible bishop attacks on that square
@@ -64,11 +47,8 @@ const U8 NUM_ROOK_RELEVANT_SQUARES[64] =
 U64 GetRelevantFreeBishopAttacks(Square sq);
 
 /* Generate all relevant possible rook attacks on a given square. The 'relevant' means we generate
- * all rook attacks on an empty board, except the edges. More informations can be found here:
+ * all rook attacks on an empty board, except the edges.
  *
- * https://www.chessprogramming.org/Magic_Bitboards
- * https://analog-hors.github.io/site/magic-bitboards/
- * 
  * Para: sq -> The square which the rook resides on
  * 
  * Return: All relevant possible rook attacks on that square
@@ -115,6 +95,6 @@ U64 GetBlockedRookAttacks(U64 b, Square sq);
  * 
  * Return: The relevant squares of a relevant attacks map given an index
  */
-U64 Find_Relevant_Squares(U16 index, U64 rev_attacks);
+U64 Find_Relevant_Squares(U32 index, U64 rev_attacks);
 
 #endif
