@@ -1,6 +1,6 @@
 #include "DataBase.h"
 
-extern const U8 NUM_BISHOP_RELEVANT_SQUARES[64] =
+const U8 NUM_BISHOP_RELEVANT_SQUARES[64] =
 {
     6, 5, 5, 5, 5, 5, 5, 6,
     5, 5, 5, 5, 5, 5, 5, 5,
@@ -12,7 +12,7 @@ extern const U8 NUM_BISHOP_RELEVANT_SQUARES[64] =
     6, 5, 5, 5, 5, 5, 5, 6
 };
 
-extern const U8 NUM_ROOK_RELEVANT_SQUARES[64] =
+const U8 NUM_ROOK_RELEVANT_SQUARES[64] =
 {
     12, 11, 11, 11, 11, 11, 11, 12,
     11, 10, 10, 10, 10, 10, 10, 11,
@@ -24,7 +24,7 @@ extern const U8 NUM_ROOK_RELEVANT_SQUARES[64] =
     12, 11, 11, 11, 11, 11, 11, 12
 };
 
-extern const U64 Bishop_Magic_Numbers[64] =
+const U64 Bishop_Magic_Numbers[64] =
 {
     0x420c80100408202ULL,
     0x1063090051100ULL,
@@ -92,7 +92,7 @@ extern const U64 Bishop_Magic_Numbers[64] =
     0xa12010940080a0c2ULL
 };
 
-extern const U64 Rook_Magic_Numbers[64] =
+const U64 Rook_Magic_Numbers[64] =
 {
     0x800008044002102ULL,
     0x1000a1281204ULL,

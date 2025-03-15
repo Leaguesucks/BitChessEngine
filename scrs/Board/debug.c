@@ -14,7 +14,7 @@ int main(void) {
         //printf("%s\n", squares[i]);
         //getchar();
 
-        //printf("%d %d\n", NUM_BISHOP_RELEVANT_SQUARES[i], NUM_ROOK_RELEVANT_SQUARES[i]);
+        printf("%d %d\n", NUM_BISHOP_RELEVANT_SQUARES[i], NUM_ROOK_RELEVANT_SQUARES[i]);
     }
 
     return 0;
