@@ -48,7 +48,7 @@ U8 CountBits(U64 b, U8 Bit);
  * Para: b   -> The bitboard
  *       Bit -> The interested set bit
  * 
- * Return: The LSB square that has been set to 1
+ * Return: The LSB square that has been set to Bit
  */
 Square Get_LSMB(U64 b, U8 Bit);
 
