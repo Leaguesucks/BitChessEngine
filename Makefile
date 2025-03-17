@@ -5,31 +5,32 @@ CC = gcc
 BFLAGS = $(CFLAGS) -I$(BPATH)
 CFLAGS = -Wall -g
 BPATH = srcs/Board
+OPATH = bin
 LDFLAGS = -lm
-TARGETS = bin/magic bin/debug
+TARGETS = $(OPATH)/magic $(OPATH)/debug
 
-all: bin $(TARGETS)
+all: odir $(TARGETS)
 
-bin:
-	mkdir -p bin
+odir:
+	mkdir -p $(OPATH)
 
-bin/magic: bin/magic.o bin/BitManipulation.o bin/DataBase.o
-	$(CC) $(BFLAGS) bin/magic.o bin/BitManipulation.o bin/DataBase.o -o bin/magic $(LDFLAGS)
+$(OPATH)/magic: $(OPATH)/magic.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o
+	$(CC) $(BFLAGS) $(OPATH)/magic.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o -o $(OPATH)/magic $(LDFLAGS)
 
-bin/magic.o: $(BPATH)/MagicGen.c $(BPATH)/MagicGen.h
-	$(CC) $(BFLAGS) -c $(BPATH)/MagicGen.c -o bin/magic.o
+$(OPATH)/magic.o: $(BPATH)/MagicGen.c $(BPATH)/MagicGen.h
+	$(CC) $(BFLAGS) -c $(BPATH)/MagicGen.c -o $(OPATH)/magic.o
 
-bin/debug: debug.o BitManipulation.o DataBase.o
-	$(CC) $(BFLAGS) debug.o BitManipulation.o DataBase.o -o debug $(LDFLAGS)
+$(OPATH)/debug: $(OPATH)/debug.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o
+	$(CC) $(BFLAGS) $(OPATH)/debug.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o -o $(OPATH)/debug $(LDFLAGS)
 
-bin/debug.o: debug.c debug.h
-	$(CC) $(BFLAGS) -c debug.c -o debug.o
+$(OPATH)/debug.o: $(BPATH)/debug.c $(BPATH)/debug.h
+	$(CC) $(BFLAGS) -c $(BPATH)/debug.c -o $(OPATH)/debug.o
 
-bin/DataBase.o: DataBase.c DataBase.h
-	$(CC) $(BFLAGS) -c DataBase.c -o DataBase.o
+$(OPATH)/DataBase.o: $(BPATH)/DataBase.c $(BPATH)/DataBase.h
+	$(CC) $(BFLAGS) -c $(BPATH)/DataBase.c -o $(OPATH)/DataBase.o
 
-bin/BitManipulation.o: BitManipulation.c BitManipulation.h
-	$(CC) $(BFLAGS) -c BitManipulation.c -o BitManipulation.o
+$(OPATH)/BitManipulation.o: $(BPATH)/BitManipulation.c $(BPATH)/BitManipulation.h
+	$(CC) $(BFLAGS) -c $(BPATH)/BitManipulation.c -o $(OPATH)/BitManipulation.o
 
 clean:
 	rm bin/*.o $(TARGETS)
