@@ -64,6 +64,7 @@ Magic number for bishops:
 0x829080820040a00dULL,
 0x2004104401002088ULL,
 0xa12010940080a0c2ULL,
+
 Magic bishop success!
 
 Magic number for rooks:
@@ -132,5 +133,6 @@ Magic number for rooks:
 0x8180100080200108ULL,
 0x440001000402000ULL,
 0x80058055204000ULL,
+
 Magic rook success!
 

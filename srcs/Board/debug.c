@@ -8,14 +8,12 @@ int main(void) {
     //b = PopBit(b, 3, A1, A3, A5);
 
     //PrintBoard(b, stdout);
-    for (int i = 0; i < 64; i++) {
-        //PrintBoard(b, stdout);
-        //PrintBoard(GetBlockedRookAttacks(b, i), stdout);
-        //printf("%s\n", squares[i]);
-        //getchar();
-
-        printf("%d %d\n", NUM_BISHOP_RELEVANT_SQUARES[i], NUM_ROOK_RELEVANT_SQUARES[i]);
-    }
+    //Print_King_Attacks("resources/King_Attacks.txt");
+    
+   for (Square s = A8; s <= H1; s++) {
+        PrintBoard(King_Attacks[s], stdout);
+        getchar();
+   }
 
     return 0;
 }

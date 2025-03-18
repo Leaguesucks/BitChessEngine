@@ -52,7 +52,7 @@ U64 Find_Magic_Number(Square sq, magic_piece mp) {
         
         /* Test for the magic number */
         for (U32 k = 0; k < possible_relevant_attacks_config_num; k++) {
-            U32 magic_index = (U32)((rev_squares[k] * magic_number) >> (64 - relevant_attack_num));
+            U64 magic_index = (rev_squares[k] * magic_number) >> (64 - relevant_attack_num);
 
             if (used_attacks[magic_index] == 0ULL) // No collision
                 used_attacks[magic_index] = attacks[k]; // This index has been used
@@ -73,17 +73,17 @@ void Generate_And_Print_Magic_Numbers(FILE *f) {
     fprintf(f, "Magic number for bishops:\n\n");
 
     for (U32 attempt = 0; attempt < 100; attempt++) { // Try for 100 times
-        U32 i;
-        for (i = 0; i < 64; i++) {
-            U64 magic_number = Find_Magic_Number((Square) i, BISHOP);
-            if (magic_number == 0) {
+        Square i;
+        for (i = A8; i <= H1; i++) {
+            U64 magic_number = Find_Magic_Number(i, BISHOP);
+            if (magic_number == 0ULL) {
                 fprintf(f, "\nAttempt %d failed, retrying...\n", attempt);
                 break;
             }
             fprintf(f, "0x%lxULL,\n", magic_number);
         }
         if (i >= 64) {
-            fprintf(f, "Magic bishop success!\n\n");
+            fprintf(f, "\nMagic bishop success!\n\n");
             break;
         }
     }
@@ -91,17 +91,17 @@ void Generate_And_Print_Magic_Numbers(FILE *f) {
     fprintf(f, "Magic number for rooks:\n\n");
 
     for (U32 attempt = 0; attempt < 100; attempt++) { // Try for 100 times
-        U32 i;
-        for (i = 0; i < 64; i++) {
-            U64 magic_number = Find_Magic_Number((Square) i, ROOK);
-            if (magic_number == 0) {
+        Square i;
+        for (i = A8; i <= H1; i++) {
+            U64 magic_number = Find_Magic_Number(i, ROOK);
+            if (magic_number == 0ULL) {
                 fprintf(f, "\nAttempt %d failed, retrying...\n", attempt);
                 break;
             }
             fprintf(f, "0x%lxULL,\n", magic_number);
         }
-        if (i >= 64) {
-            fprintf(f, "Magic rook success!\n\n");
+        if (i >= H1) {
+            fprintf(f, "\nMagic rook success!\n\n");
             break;
         }
     }
@@ -109,7 +109,7 @@ void Generate_And_Print_Magic_Numbers(FILE *f) {
 
 /* Run this program to obtain the magic number */
 int main(int argc, char* argv[]) {
-    FILE *out = fopen("Magic_Numbers.txt", "w");
+    FILE *out = fopen("resources/Magic_Numbers.txt", "w");
     if (out == NULL) {
         perror("Cannot open out file for writing\n");
         exit(EXIT_FAILURE);

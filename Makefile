@@ -6,6 +6,7 @@ BFLAGS = $(CFLAGS) -I$(BPATH)
 CFLAGS = -Wall -g
 BPATH = srcs/Board
 OPATH = bin
+RPATH = resources
 LDFLAGS = -lm
 TARGETS = $(OPATH)/magic $(OPATH)/debug
 
@@ -33,7 +34,7 @@ $(OPATH)/BitManipulation.o: $(BPATH)/BitManipulation.c $(BPATH)/BitManipulation.
 	$(CC) $(BFLAGS) -c $(BPATH)/BitManipulation.c -o $(OPATH)/BitManipulation.o
 
 clean:
-	rm bin/*.o $(TARGETS)
+	rm $(OPATH)/*.o $(TARGETS)
 
 cleantxt:
-	rm -f *.txt
+	rm  $(RPATH)/*.txt

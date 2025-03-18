@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "bitboard.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "debug.h": "c"
     }
 }

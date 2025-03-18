@@ -24,7 +24,143 @@ const U8 NUM_ROOK_RELEVANT_SQUARES[64] =
     12, 11, 11, 11, 11, 11, 11, 12
 };
 
-const U64 Bishop_Magic_Numbers[64] =
+const U64 RELEVANT_BISHOP_ATTACKS[64] =
+{
+    0x40201008040200ULL,
+    0x20100804020000ULL,
+    0x50080402000000ULL,
+    0x28440200000000ULL,
+    0x14224000000000ULL,
+    0xa102040000000ULL,
+    0x4081020400000ULL,
+    0x2040810204000ULL,
+    0x402010080400ULL,
+    0x201008040200ULL,
+    0x500804020000ULL,
+    0x284402000000ULL,
+    0x142240000000ULL,
+    0xa1020400000ULL,
+    0x40810204000ULL,
+    0x20408102000ULL,
+    0x40004020100800ULL,
+    0x20002010080400ULL,
+    0x50005008040200ULL,
+    0x28002844020000ULL,
+    0x14001422400000ULL,
+    0xa000a10204000ULL,
+    0x4000408102000ULL,
+    0x2000204081000ULL,
+    0x20400040201000ULL,
+    0x10200020100800ULL,
+    0x8500050080400ULL,
+    0x44280028440200ULL,
+    0x22140014224000ULL,
+    0x100a000a102000ULL,
+    0x8040004081000ULL,
+    0x4020002040800ULL,
+    0x10204000402000ULL,
+    0x8102000201000ULL,
+    0x4085000500800ULL,
+    0x2442800284400ULL,
+    0x40221400142200ULL,
+    0x20100a000a1000ULL,
+    0x10080400040800ULL,
+    0x8040200020400ULL,
+    0x8102040004000ULL,
+    0x4081020002000ULL,
+    0x2040850005000ULL,
+    0x24428002800ULL,
+    0x402214001400ULL,
+    0x4020100a000a00ULL,
+    0x20100804000400ULL,
+    0x10080402000200ULL,
+    0x4081020400000ULL,
+    0x2040810200000ULL,
+    0x20408500000ULL,
+    0x244280000ULL,
+    0x4022140000ULL,
+    0x4020100a0000ULL,
+    0x40201008040000ULL,
+    0x20100804020000ULL,
+    0x2040810204000ULL,
+    0x20408102000ULL,
+    0x204085000ULL,
+    0x2442800ULL,
+    0x40221400ULL,
+    0x4020100a00ULL,
+    0x402010080400ULL,
+    0x40201008040200ULL
+};
+
+const U64 RELEVANT_ROOK_ATTACKS[64] =
+{
+    0x7e80808080808000ULL,
+    0x3e40404040404000ULL,
+    0x5e20202020202000ULL,
+    0x6e10101010101000ULL,
+    0x7608080808080800ULL,
+    0x7a04040404040400ULL,
+    0x7c02020202020200ULL,
+    0x7e01010101010100ULL,
+    0x7e808080808000ULL,
+    0x3e404040404000ULL,
+    0x5e202020202000ULL,
+    0x6e101010101000ULL,
+    0x76080808080800ULL,
+    0x7a040404040400ULL,
+    0x7c020202020200ULL,
+    0x7e010101010100ULL,
+    0x807e8080808000ULL,
+    0x403e4040404000ULL,
+    0x205e2020202000ULL,
+    0x106e1010101000ULL,
+    0x8760808080800ULL,
+    0x47a0404040400ULL,
+    0x27c0202020200ULL,
+    0x17e0101010100ULL,
+    0x80807e80808000ULL,
+    0x40403e40404000ULL,
+    0x20205e20202000ULL,
+    0x10106e10101000ULL,
+    0x8087608080800ULL,
+    0x4047a04040400ULL,
+    0x2027c02020200ULL,
+    0x1017e01010100ULL,
+    0x8080807e808000ULL,
+    0x4040403e404000ULL,
+    0x2020205e202000ULL,
+    0x1010106e101000ULL,
+    0x8080876080800ULL,
+    0x404047a040400ULL,
+    0x202027c020200ULL,
+    0x101017e010100ULL,
+    0x808080807e8000ULL,
+    0x404040403e4000ULL,
+    0x202020205e2000ULL,
+    0x101010106e1000ULL,
+    0x8080808760800ULL,
+    0x40404047a0400ULL,
+    0x20202027c0200ULL,
+    0x10101017e0100ULL,
+    0x80808080807e00ULL,
+    0x40404040403e00ULL,
+    0x20202020205e00ULL,
+    0x10101010106e00ULL,
+    0x8080808087600ULL,
+    0x4040404047a00ULL,
+    0x2020202027c00ULL,
+    0x1010101017e00ULL,
+    0x8080808080807eULL,
+    0x4040404040403eULL,
+    0x2020202020205eULL,
+    0x1010101010106eULL,
+    0x8080808080876ULL,
+    0x404040404047aULL,
+    0x202020202027cULL,
+    0x101010101017eULL
+};
+
+const U64 BISHOP_MAGIC_NUMBERS[64] =
 {
     0x420c80100408202ULL,
     0x1063090051100ULL,
@@ -92,7 +228,7 @@ const U64 Bishop_Magic_Numbers[64] =
     0xa12010940080a0c2ULL
 };
 
-const U64 Rook_Magic_Numbers[64] =
+const U64 ROOK_MAGIC_NUMBERS[64] =
 {
     0x800008044002102ULL,
     0x1000a1281204ULL,
@@ -158,6 +294,145 @@ const U64 Rook_Magic_Numbers[64] =
     0x8180100080200108ULL,
     0x440001000402000ULL,
     0x80058055204000ULL
+};
+
+U64 Bishop_Attacks[64][512];
+U64 Rook_Attacks[64][4096];
+
+const U64 Knight_Attacks[64] =
+{
+    0x20400000000000ULL,
+    0x10a00000000000ULL,
+    0x88500000000000ULL,
+    0x44280000000000ULL,
+    0x22140000000000ULL,
+    0x110a0000000000ULL,
+    0x8050000000000ULL,
+    0x4020000000000ULL,
+    0x2000204000000000ULL,
+    0x100010a000000000ULL,
+    0x8800885000000000ULL,
+    0x4400442800000000ULL,
+    0x2200221400000000ULL,
+    0x1100110a00000000ULL,
+    0x800080500000000ULL,
+    0x400040200000000ULL,
+    0x4020002040000000ULL,
+    0xa0100010a0000000ULL,
+    0x5088008850000000ULL,
+    0x2844004428000000ULL,
+    0x1422002214000000ULL,
+    0xa1100110a000000ULL,
+    0x508000805000000ULL,
+    0x204000402000000ULL,
+    0x40200020400000ULL,
+    0xa0100010a00000ULL,
+    0x50880088500000ULL,
+    0x28440044280000ULL,
+    0x14220022140000ULL,
+    0xa1100110a0000ULL,
+    0x5080008050000ULL,
+    0x2040004020000ULL,
+    0x402000204000ULL,
+    0xa0100010a000ULL,
+    0x508800885000ULL,
+    0x284400442800ULL,
+    0x142200221400ULL,
+    0xa1100110a00ULL,
+    0x50800080500ULL,
+    0x20400040200ULL,
+    0x4020002040ULL,
+    0xa0100010a0ULL,
+    0x5088008850ULL,
+    0x2844004428ULL,
+    0x1422002214ULL,
+    0xa1100110aULL,
+    0x508000805ULL,
+    0x204000402ULL,
+    0x40200020ULL,
+    0xa0100010ULL,
+    0x50880088ULL,
+    0x28440044ULL,
+    0x14220022ULL,
+    0xa110011ULL,
+    0x5080008ULL,
+    0x2040004ULL,
+    0x402000ULL,
+    0xa01000ULL,
+    0x508800ULL,
+    0x284400ULL,
+    0x142200ULL,
+    0xa1100ULL,
+    0x50800ULL,
+    0x20400ULL    
+};
+
+const U64 King_Attacks[64] =
+{
+    0x40c0000000000000ULL,
+    0xa0e0000000000000ULL,
+    0x5070000000000000ULL,
+    0x2838000000000000ULL,
+    0x141c000000000000ULL,
+    0xa0e000000000000ULL,
+    0x507000000000000ULL,
+    0x203000000000000ULL,
+    0xc040c00000000000ULL,
+    0xe0a0e00000000000ULL,
+    0x7050700000000000ULL,
+    0x3828380000000000ULL,
+    0x1c141c0000000000ULL,
+    0xe0a0e0000000000ULL,
+    0x705070000000000ULL,
+    0x302030000000000ULL,
+    0xc040c000000000ULL,
+    0xe0a0e000000000ULL,
+    0x70507000000000ULL,
+    0x38283800000000ULL,
+    0x1c141c00000000ULL,
+    0xe0a0e00000000ULL,
+    0x7050700000000ULL,
+    0x3020300000000ULL,
+    0xc040c0000000ULL,
+    0xe0a0e0000000ULL,
+    0x705070000000ULL,
+    0x382838000000ULL,
+    0x1c141c000000ULL,
+    0xe0a0e000000ULL,
+    0x70507000000ULL,
+    0x30203000000ULL,
+    0xc040c00000ULL,
+    0xe0a0e00000ULL,
+    0x7050700000ULL,
+    0x3828380000ULL,
+    0x1c141c0000ULL,
+    0xe0a0e0000ULL,
+    0x705070000ULL,
+    0x302030000ULL,
+    0xc040c000ULL,
+    0xe0a0e000ULL,
+    0x70507000ULL,
+    0x38283800ULL,
+    0x1c141c00ULL,
+    0xe0a0e00ULL,
+    0x7050700ULL,
+    0x3020300ULL,
+    0xc040c0ULL,
+    0xe0a0e0ULL,
+    0x705070ULL,
+    0x382838ULL,
+    0x1c141cULL,
+    0xe0a0eULL,
+    0x70507ULL,
+    0x30203ULL,
+    0xc040ULL,
+    0xe0a0ULL,
+    0x7050ULL,
+    0x3828ULL,
+    0x1c14ULL,
+    0xe0aULL,
+    0x705ULL,
+    0x302ULL    
 };
 
 U64 GetRelevantFreeBishopAttacks(Square sq) {
@@ -251,4 +526,145 @@ U64 Find_Relevant_Squares(U32 index, U64 rev_attacks) {
     }
 
     return rev_squares;
+}
+
+void Print_Relevant_Rook_Bishop_Attacks(char* fname) {
+    FILE *f = (fname == NULL) ? stdout : fopen(fname, "w");
+    if (f == NULL) {
+        fprintf(stderr, "Error: Cannot open file \'%s\'\n", fname);
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(f, "Relevant attacks for the bishops:\n\n");
+    for (Square square = A8; square <= H1; square++)
+        fprintf(f, "0x%lxULL,\n", GetRelevantFreeBishopAttacks(square));
+
+
+    fprintf(f, "\nRelevant attacks for the rooks:\n\n");
+    for (Square square = A8; square <= H1; square++)
+        fprintf(f, "0x%lxULL,\n", GetRelevantFreeRookAttacks(square));
+
+    fprintf(f, "\nRelevant rooks and bishops attacks generated successfully\n");
+
+    if (f != stdout) fclose(f);
+}
+
+U8 Init_Rook_Bishop_Lookup_Table(void) {
+    memset(Bishop_Attacks, 0, 512 * 64 * sizeof(U64));
+    memset(Rook_Attacks, 0, 4096 * 64 * sizeof(U64));
+    U8 success = 1;
+
+    for (Square square = A8; square <= H1; square++) {
+        U32 Num_Bishop_Relevant_Squares_Variations = 1 << NUM_BISHOP_RELEVANT_SQUARES[square];
+        U32 Num_Rook_Relevant_Squares_Variations = 1 << NUM_ROOK_RELEVANT_SQUARES[square];
+
+        // Load up the bishop lookup table
+        for (U32 i = 0; i < Num_Bishop_Relevant_Squares_Variations; i++) {
+            U64 Relevant_Squares = Find_Relevant_Squares(i, RELEVANT_BISHOP_ATTACKS[square]);
+            U64 LookUp_Index = (Relevant_Squares * BISHOP_MAGIC_NUMBERS[square]) >> (64 - NUM_BISHOP_RELEVANT_SQUARES[square]);
+            
+            if (Bishop_Attacks[square][LookUp_Index] == 0ULL)
+                Bishop_Attacks[square][LookUp_Index] = GetBlockedBishopAttacks(Relevant_Squares, square);
+            else { // There is a collision
+                fprintf(stderr, "ERROR: Bishop Magic Number for square %d = 0x%lx failed!\n", square, BISHOP_MAGIC_NUMBERS[square]);
+                if (success != 0) {
+                    success = 0;
+                    fprintf(stderr, "Var Num %d: Bishop_Attacks[%d][%ld] = %ld\n", i, square, LookUp_Index, Bishop_Attacks[square][LookUp_Index]);
+                    return success;
+                }
+            }
+        }
+
+        // Load up the rook lookup table
+        for (U32 i = 0; i < Num_Rook_Relevant_Squares_Variations; i++) {
+            U64 Relevant_Squares = Find_Relevant_Squares(i, RELEVANT_ROOK_ATTACKS[square]);
+            U64 LookUp_Index = (Relevant_Squares * ROOK_MAGIC_NUMBERS[square]) >> (64 - NUM_ROOK_RELEVANT_SQUARES[square]);
+            
+            if (Rook_Attacks[square][LookUp_Index] == 0ULL)
+                Rook_Attacks[square][LookUp_Index] = GetBlockedRookAttacks(Relevant_Squares, square);
+            else { // There is a collision
+                fprintf(stderr, "ERROR: ROOK Magic Number for square %d = 0x%lx failed!\n", square, ROOK_MAGIC_NUMBERS[square]);
+                if (success != 0) {
+                    success = 0;
+                    fprintf(stderr, "Var Num %d: ROOK_Attacks[%d][%ld] = %ld\n", i, square, LookUp_Index, Rook_Attacks[square][LookUp_Index]);
+                    return success;
+                }
+            }
+        }
+    }
+
+    return success;
+}
+
+void Print_Knight_Attacks(char *fname) {
+    FILE *f = (fname == NULL) ? stdout : fopen(fname, "w");
+    if (f == NULL) {
+        fprintf(stderr, "Error: Cannot open file \'%s\'\n", fname);
+        exit(EXIT_FAILURE);
+    }
+
+    for (Square square = A8; square <= H1; square++) {
+        int rank = ((int) square / 8) + 1; // Current rank of this square
+        int file = ((int) square % 8) + 1; // Current file of this square
+        U64 attacks = 0ULL;
+
+        int newRank, newFile;
+        if ((newRank = rank - 1) >= 1 && (newFile = file - 2) >= 1) // Short North Long West
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank - 2) >= 1 && (newFile = file - 1) >= 1) // Long North Short West
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank - 2) >= 1 && (newFile = file + 1) <= 8) // Long North Short East
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank - 1) >= 1 && (newFile = file + 2) <= 8) // Short North Long East
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank + 1) <= 8 && (newFile = file + 2) <= 8) // Short South Long East
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank + 2) <= 8 && (newFile = file + 1) <= 8) // Long South Short East
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank + 2) <= 8 && (newFile = file - 1) >= 1) // Long South Short West
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank + 1) <= 8 && (newFile = file - 2) >= 1) // Short South Long West
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        
+        fprintf(f, "0x%lxULL,\n", attacks);
+    }
+
+    fclose(f);
+}
+
+void Print_King_Attacks(char *fname) {
+    FILE *f = (fname == NULL) ? stdout : fopen(fname, "w");
+    if (f == NULL) {
+        fprintf(stderr, "Error: Cannot open file \'%s\'\n", fname);
+        exit(EXIT_FAILURE);
+    }
+
+    for (Square square = A8; square <= H1; square++) {
+        int rank = ((int) square / 8) + 1; // Current rank of this square
+        int file = ((int) square % 8) + 1; // Current file of this square
+        U64 attacks = 0ULL;
+
+        int newFile, newRank;
+        
+        if ((newRank = rank - 1) >= 1 && (newFile = file - 1) >= 1) // NW
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank - 1) >= 1) // N
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (file - 1));
+        if ((newRank = rank - 1) >= 1 && (newFile = file + 1) <= 8) // NE
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newFile = file + 1) <= 8) // E
+            attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank + 1) <= 8 && (newFile = file + 1) <= 8) // SE
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile) - 1);
+        if ((newRank = rank + 1) <= 8) // S
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (file - 1));
+        if ((newRank = rank + 1) <= 8 && (newFile = file - 1) >= 1) // SW
+            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        if ((newFile = file - 1) >= 1) // W
+            attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+
+        fprintf(f, "0x%lxULL,\n", attacks);
+    }
+
+    fclose(f);
 }

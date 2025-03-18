@@ -48,7 +48,7 @@ void PrintBoard(U64 b, FILE *f) {
         fprintf(f, "%d  ", 8 - row);
 
         for (int col = 0; col < 8; col++) {
-            if ((b << (col + 8*row)) & REVERSE_ONE) fprintf(f, "1 ");
+            if ((b << (col + 8*row)) & REVERSE_ONE) fprintf(f, COLOR(YELLOW)"1 "COLOR(RESET));
             else fprintf(f, "0 ");
         }
 
