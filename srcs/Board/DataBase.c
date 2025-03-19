@@ -299,7 +299,7 @@ const U64 ROOK_MAGIC_NUMBERS[64] =
 U64 Bishop_Attacks[64][512];
 U64 Rook_Attacks[64][4096];
 
-const U64 Knight_Attacks[64] =
+const U64 KNIGHT_ATTACKS[64] =
 {
     0x20400000000000ULL,
     0x10a00000000000ULL,
@@ -367,7 +367,7 @@ const U64 Knight_Attacks[64] =
     0x20400ULL    
 };
 
-const U64 King_Attacks[64] =
+const U64 KING_ATTACKS[64] =
 {
     0x40c0000000000000ULL,
     0xa0e0000000000000ULL,
@@ -433,6 +433,142 @@ const U64 King_Attacks[64] =
     0xe0aULL,
     0x705ULL,
     0x302ULL    
+};
+
+const U64 WHITE_PAWN_ATTACKS[64] =
+{
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0x4000000000000000ULL,
+    0xa000000000000000ULL,
+    0x5000000000000000ULL,
+    0x2800000000000000ULL,
+    0x1400000000000000ULL,
+    0xa00000000000000ULL,
+    0x500000000000000ULL,
+    0x200000000000000ULL,
+    0x40000000000000ULL,
+    0xa0000000000000ULL,
+    0x50000000000000ULL,
+    0x28000000000000ULL,
+    0x14000000000000ULL,
+    0xa000000000000ULL,
+    0x5000000000000ULL,
+    0x2000000000000ULL,
+    0x400000000000ULL,
+    0xa00000000000ULL,
+    0x500000000000ULL,
+    0x280000000000ULL,
+    0x140000000000ULL,
+    0xa0000000000ULL,
+    0x50000000000ULL,
+    0x20000000000ULL,
+    0x4000000000ULL,
+    0xa000000000ULL,
+    0x5000000000ULL,
+    0x2800000000ULL,
+    0x1400000000ULL,
+    0xa00000000ULL,
+    0x500000000ULL,
+    0x200000000ULL,
+    0x40000000ULL,
+    0xa0000000ULL,
+    0x50000000ULL,
+    0x28000000ULL,
+    0x14000000ULL,
+    0xa000000ULL,
+    0x5000000ULL,
+    0x2000000ULL,
+    0x400000ULL,
+    0xa00000ULL,
+    0x500000ULL,
+    0x280000ULL,
+    0x140000ULL,
+    0xa0000ULL,
+    0x50000ULL,
+    0x20000ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL
+};
+
+const U64 BLACK_PAWN_ATTACKS[64] =
+{
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0x400000000000ULL,
+    0xa00000000000ULL,
+    0x500000000000ULL,
+    0x280000000000ULL,
+    0x140000000000ULL,
+    0xa0000000000ULL,
+    0x50000000000ULL,
+    0x20000000000ULL,
+    0x4000000000ULL,
+    0xa000000000ULL,
+    0x5000000000ULL,
+    0x2800000000ULL,
+    0x1400000000ULL,
+    0xa00000000ULL,
+    0x500000000ULL,
+    0x200000000ULL,
+    0x40000000ULL,
+    0xa0000000ULL,
+    0x50000000ULL,
+    0x28000000ULL,
+    0x14000000ULL,
+    0xa000000ULL,
+    0x5000000ULL,
+    0x2000000ULL,
+    0x400000ULL,
+    0xa00000ULL,
+    0x500000ULL,
+    0x280000ULL,
+    0x140000ULL,
+    0xa0000ULL,
+    0x50000ULL,
+    0x20000ULL,
+    0x4000ULL,
+    0xa000ULL,
+    0x5000ULL,
+    0x2800ULL,
+    0x1400ULL,
+    0xa00ULL,
+    0x500ULL,
+    0x200ULL,
+    0x40ULL,
+    0xa0ULL,
+    0x50ULL,
+    0x28ULL,
+    0x14ULL,
+    0xaULL,
+    0x5ULL,
+    0x2ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL,
+    0ULL
 };
 
 U64 GetRelevantFreeBishopAttacks(Square sq) {
@@ -662,6 +798,68 @@ void Print_King_Attacks(char *fname) {
             attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
         if ((newFile = file - 1) >= 1) // W
             attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+
+        fprintf(f, "0x%lxULL,\n", attacks);
+    }
+
+    fclose(f);
+}
+
+void Print_Pawn_Attacks(char *fname) {
+    FILE *f = (fname == NULL) ? stdout : fopen(fname, "w");
+    if (f == NULL) {
+        fprintf(stderr, "Error: Cannot open file \'%s\'\n", fname);
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(f, "White Pawn Attacks:\n\n");
+
+
+    for (Square square = A8; square <= H1; square++) {
+        int rank = ((int) square / 8) + 1;
+        int file = ((int) square % 8) + 1;
+
+        /* We don't need the first and last rows so pad them with 0 */
+        if (rank == 1 || rank == 8) {
+            fprintf(f, "0ULL,\n");
+            continue;
+        }
+
+        U64 attacks = 0ULL;
+
+        int newRank, newFile;
+        if ((newRank = rank - 1) >= 1) {
+            if ((newFile = file - 1) >= 1)
+                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            if ((newFile = file + 1) <= 8)
+                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        }
+
+        fprintf(f, "0x%lxULL,\n", attacks);
+    }
+
+    fprintf(f, "\nPrint Black Pawn Attacks\n\n");
+
+    for (Square square = A8; square <= H1; square++) {
+        int rank = ((int) square / 8) + 1;
+        int file = ((int) square % 8) + 1;
+
+        /* We don't need the first and last rows so pad them with 0 */
+        if (rank == 1 || rank == 8) {
+            fprintf(f, "0ULL,\n");
+            continue;
+        }
+
+        U64 attacks = 0ULL;
+
+        int newRank, newFile;
+        if ((newRank = rank + 1) <= 8) {
+            if ((newFile = file - 1) >= 1)
+                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            if ((newFile = file + 1) <= 8)
+                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+        }
+
 
         fprintf(f, "0x%lxULL,\n", attacks);
     }

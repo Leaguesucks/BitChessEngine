@@ -35,7 +35,7 @@ extern const U64 BISHOP_MAGIC_NUMBERS[64];
 /* Relevant bishop attacks */
 extern const U64 RELEVANT_BISHOP_ATTACKS[64];
 
-/* Relevant rook attaacks */
+/* Relevant rook attacks */
 extern const U64 RELEVANT_ROOK_ATTACKS[64];
 
 /* All possible attacks of each square of the bishop */
@@ -45,10 +45,16 @@ extern U64 Bishop_Attacks[64][512];
 extern U64 Rook_Attacks[64][4096];
 
 /* All possible attacks for each square of the knights */
-extern const U64 Knight_Attacks[64];
+extern const U64 KNIGHT_ATTACKS[64];
 
 /* All possible attacks for each square of the king. This means no castling here */
-extern const U64 King_Attacks[64];
+extern const U64 KING_ATTACKS[64];
+
+/* All possible attacks for each square of the white pawns */
+extern const U64 WHITE_PAWN_ATTACKS[64];
+
+/* All possible attacks for each square of the black pawns */
+extern const U64 BLACK_PAWN_ATTACKS[64];
 
 /* Generate all relevant possible bishop attacks on a given square. The 'relevant' means we generate
  * all bishop attacks on an empty board, except the edges
@@ -194,5 +200,11 @@ void Print_Knight_Attacks(char *fname);
  * Para: fname -> Name of the output file, print to stdout if set to NULL
  */
 void Print_King_Attacks(char *fname);
+
+/* Calculate all possible pawn attacks for each square and print the result to fname
+ *
+ * Para: fname -> Name of the output file, print to stdout if set to NULL
+ */
+void Print_Pawn_Attacks(char *fname);
 
 #endif

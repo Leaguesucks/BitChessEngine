@@ -10,10 +10,19 @@ int main(void) {
     //PrintBoard(b, stdout);
     //Print_King_Attacks("resources/King_Attacks.txt");
     
-   for (Square s = A8; s <= H1; s++) {
-        PrintBoard(King_Attacks[s], stdout);
+    for (Square s = 0; s < 64; s++) {
+        PrintBoard(WHITE_PAWN_ATTACKS[s], stdout);
         getchar();
    }
+
+   printf("\nBlack Pawns\n\n");
+
+   for (Square s = 0; s < 64; s++) {
+        PrintBoard(BLACK_PAWN_ATTACKS[s], stdout);
+        getchar();
+   }
+
+    //Print_Pawn_Attacks("resources/Pawn_Attacks.txt");
 
     return 0;
 }
