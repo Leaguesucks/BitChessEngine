@@ -15,6 +15,16 @@
 
 #define REVERSE_ONE 0x8000000000000000ULL
 
+/* Edges of the board, defined as the first as last rank/file */
+#define EDGES 0xff818181818181ffULL
+
+/* Defines the castling sequences */
+
+#define BLACK_CASTLE_RIGHT 0x7000000000000000ULL
+#define BLACK_CASTLE_LEFT  0x0600000000000000ULL
+#define WHITE_CASTLE_RIGHT 0x0000000000000070ULL
+#define WHITE_CASTLE_LEFT  0x0000000000000006ULL
+
 #define B -1.0f // Black side
 #define W 1.0f  // White side
 
@@ -60,25 +70,32 @@ typedef enum Square {
     NOT_A_SQUARE
 } Square;
 
-typedef struct Piece {
+typedef struct Values {
     float rev_val;       // Relative value of the piece right now, as evaluated by a chess engine for example
     U8  numMoves;        // Number of available moves for this piece
-    U64 Position;        // Current position of the piece
+    Square Position;        // Current position of the piece
     U64 attacks;         // Its available attacks  
-} Piece;
+} Values;
 
-/* Since pawn has distince moves and attacks, need a different struct type to represent it */
+/* Since pawn has distince moves and attacks, need a different struct type to represent it. This is the largest type in all pieces struct type */
 typedef struct Pawn {
-    Piece values;
+    float abs_val; // Absolute value of this piece.
+    Values values;
     U64 moves;
-    U8 firstMove; // True of False: Determine if it is this pawn first move
 } Pawn;
 
 /* Rook also needs to be defined distinctively since we need to know which castling side does it link to */
 typedef struct Rook {
-    Piece values;
-    int castling_side;
+    float abs_val; // Absolute value of this piece
+    Values values;
+    int castling_side; // Which casling side does this rook link to. 0 for left, 1 for right
 } Rook;
+
+/* Other pieces. That includes knights, bishops, and queens. King does not need a struct type since there can only be 1 king */
+typedef struct Piece {
+    float abs_val;
+    Values values;
+} Piece;
 
 typedef struct BitBoard {
     
@@ -87,7 +104,7 @@ typedef struct BitBoard {
     U64 pos_wRooks;
     U64 pos_wKnights;
     U64 pos_wBishops;
-    U64 pos_wQueen;
+    U64 pos_wQueens;
     U64 pos_wKing;
     U64 pos_wAll;
 
@@ -95,7 +112,7 @@ typedef struct BitBoard {
     U64 pos_bRooks;
     U64 pos_bKnights;
     U64 pos_bBishops;
-    U64 pos_bQueen;
+    U64 pos_bQueens;
     U64 pos_bKing;
     U64 pos_bAll;
 
@@ -151,7 +168,27 @@ typedef struct BitBoard {
     /* Pawn EnPassen for both side */
     U64 EnPassen;
 
-    /* Catleing left and right positions for the king. A value of 0 means it is not possible to castle on that side anymore */
+    /* Catleing left and right positions for the king. A value of 0 means it is not possible to castle on that side anymore. 
+     * Index 0 -> Left castle, index 1 -> right castle.
+     */
+    U64 wCastle[2];
+    U64 bCastle[2];
+
+    /* The pin positions of each side. If a piece is pin then it cannot move */
+    U64 wPins;
+    U64 bPins;
+
+    /* Who to move. -1 for black and 1 for white */
+    float side2play;
+
+    /* 50 moves rules counter. The game is a draw if it is 0. Reset back to 100 if there is a pawn
+     * advance or capturing from both sides. Decrement starts from the next moves after the most
+     * recent 'reset' action.
+     */
+    U8 _50Count;
+
+    /* Full move counter since the begining of the game. Increment by 1 after black makes a move */
+    U16 Full_MoveCount;
     
 } BitBoard;
 
