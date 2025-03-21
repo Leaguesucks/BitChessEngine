@@ -1,8 +1,8 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H
 
-#include "ChessGame.h"
-
+#include "../srcs/Board/ChessGame.h"
+#include <stdio.h>
 /* For printing colored text (debugging or style purpose)
  *
  * USAGE: COLOR(color) "String" COLOR(RESET)              
