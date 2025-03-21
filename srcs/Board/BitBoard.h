@@ -88,7 +88,7 @@ typedef struct Pawn {
 typedef struct Rook {
     float abs_val; // Absolute value of this piece
     Values values;
-    int castling_side; // Which casling side does this rook link to. 0 for left, 1 for right
+    U8 castling_side; // Which casling side does this rook link to. 0 for left, 1 for right
 } Rook;
 
 /* Other pieces. That includes knights, bishops, and queens. King does not need a struct type since there can only be 1 king */

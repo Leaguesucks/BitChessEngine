@@ -25,19 +25,19 @@ $(OPATH)/magic.o: $(BPATH)/MagicGen.c $(BPATH)/MagicGen.h
 $(OPATH)/debug: $(DEBUGOBJ)
 	$(CC) $(BFLAGS) $(DEBUGOBJ) -o $(OPATH)/debug $(LDFLAGS)
 
-$(OPATH)/debug.o: $(BPATH)/debug.c $(BPATH)/debug.h
+$(OPATH)/debug.o: $(BPATH)/debug.c $(BPATH)/debug.h $(BPATH)/BitBoard.h
 	$(CC) $(BFLAGS) -c $(BPATH)/debug.c -o $(OPATH)/debug.o
 
-$(OPATH)/ChessGame.o: $(BPATH)/ChessGame.c $(BPATH)/ChessGame.h
+$(OPATH)/ChessGame.o: $(BPATH)/ChessGame.c $(BPATH)/ChessGame.h $(BPATH)/BitBoard.h
 	$(CC) $(BFLAGS) -c $(BPATH)/ChessGame.c -o $(OPATH)/ChessGame.o
 
-$(OPATH)/MoveGen.o: $(BPATH)/MoveGen.c $(BPATH)/MoveGen.h
+$(OPATH)/MoveGen.o: $(BPATH)/MoveGen.c $(BPATH)/MoveGen.h $(BPATH)/BitBoard.h
 	$(CC) $(BFLAGS) -c $(BPATH)/MoveGen.c -o $(OPATH)/MoveGen.o
 
-$(OPATH)/DataBase.o: $(BPATH)/DataBase.c $(BPATH)/DataBase.h
+$(OPATH)/DataBase.o: $(BPATH)/DataBase.c $(BPATH)/DataBase.h $(BPATH)/BitBoard.h
 	$(CC) $(BFLAGS) -c $(BPATH)/DataBase.c -o $(OPATH)/DataBase.o
 
-$(OPATH)/BitManipulation.o: $(BPATH)/BitManipulation.c $(BPATH)/BitManipulation.h
+$(OPATH)/BitManipulation.o: $(BPATH)/BitManipulation.c $(BPATH)/BitManipulation.h $(BPATH)/BitBoard.h
 	$(CC) $(BFLAGS) -c $(BPATH)/BitManipulation.c -o $(OPATH)/BitManipulation.o
 
 clean:
