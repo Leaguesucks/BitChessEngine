@@ -3,7 +3,7 @@
 
 CC = gcc
 BFLAGS = $(CFLAGS) -I$(BPATH)
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -mbmi
 BPATH = srcs/Board
 TPATH = Test
 OPATH = bin

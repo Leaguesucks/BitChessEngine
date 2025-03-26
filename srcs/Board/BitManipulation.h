@@ -1,8 +1,11 @@
-/* Mapulates bits on the bitboard */
+/* Mapulates bits on the bitboard 
+ * IMPORTANT: Your CPU and environment MUST support <x86intrin.h> H/W instructions
+ */
 
 #ifndef _BITMALPULATION_H_
 #define _BITMALPULATION_H_
 
+#include <x86intrin.h> // C/C++ (GCC, Clang)
 #include "BitBoard.h"
 
 /* Set the correspond bit to a square on the bitboard

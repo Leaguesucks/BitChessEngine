@@ -3,6 +3,10 @@
 
 #include "../srcs/Board/ChessGame.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 /* For printing colored text (debugging or style purpose)
  *
  * USAGE: COLOR(color) "String" COLOR(RESET)              
@@ -32,6 +36,17 @@ const char *squares[65] =
     "A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
     "NQ"
 };
+
+U64 random_U64(void) {
+    U64 u1, u2, u3, u4;
+    u1 = (U64)(random()) & 0xFFFF; u2 = (U64)(random()) & 0xFFFF;
+    u3 = (U64)(random()) & 0xFFFF; u4 = (U64)(random()) & 0xFFFF;
+    return u1 | (u2 << 16) | (u3 << 32) | (u4 << 48);
+}
+
+U64 random_U64_with_more_1sBit(void) {
+    return random_U64() & random_U64() & random_U64();
+}
 
 /* Print the bitboard (an U64 type) on f stream
  *
