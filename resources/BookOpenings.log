@@ -1,0 +1,64 @@
+# Book Openings
+# Each line contains the full moves in every openings
+# WARNING: DO NOT DELETE
+
+# File format: Everything in a line comes after with '#' is comments
+# Each information lines will seperate information fields with '-'
+# Each move will begins with the side to make the move, its move, FEN and n total number of responses e.g., W e4 - rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1 - 20
+# Then the next n following lines will be possible responses from the opponents. e.g., 1. - e5
+
+# These openings were taken from an online chess openings database: https://www.bing.com/ck/a?!&&p=39b7168adeea10e706678fb90d46f2520770a18af97f747f2e50720ee4fbd591JmltdHM9MTc0Mjk0NzIwMA&ptn=3&ver=2&hsh=4&fclid=36c4bac5-d504-6a67-171d-af42d4bc6b14&psq=where+can+I+find+a+chess+opening+database&u=a1aHR0cHM6Ly93d3cuMzY1Y2hlc3MuY29tL29wZW5pbmcucGhw&ntb=1
+
+W - e4 20 - rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1 - "B00 King's pawn opening"
+1. - c5
+2. - e5
+3. - e6
+4. - c6
+5. - d6
+6. - d5
+7. - g6
+8. - Nf6
+9. - Nc6
+10. - b6
+11. - a6
+12. - g5
+13. - f5
+14. - a5 
+15. - Nh6
+16. - h6 
+17. - f6
+18. - Na6
+19. - h5
+20. - b5
+
+B - c5 - rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2 - "B20 Sicilian defence"
+1. - Nf3
+2. - Nc3
+3. - c3
+4. - d4 
+5. - f4
+6. - d3
+7. - b3
+8. - c4
+9. - Ne2
+10. - g3
+11. - Bc4
+12. - b4 
+13. - a3 
+14. - Be2
+15. - Na3 
+16. - Bb5
+17. - Qh5
+18. - e5
+19. - Qe2
+20. - Qf3
+21. - h3 
+22. - f3
+23. - a4 
+24. - Bd3
+25. - Nh3
+26. - h4
+27. - Qg4
+28. - g4
+
+B - e5 - rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2 - "C20 King's pawn game"
