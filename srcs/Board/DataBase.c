@@ -299,6 +299,8 @@ const U64 ROOK_MAGIC_NUMBERS[64] =
 U64 Bishop_Attacks[64][512];
 U64 Rook_Attacks[64][4096];
 
+U64 Sliders_Rays[64][8];
+
 const U64 KNIGHT_ATTACKS[64] =
 {
     0x20400000000000ULL,
@@ -730,6 +732,40 @@ U8 Init_Rook_Bishop_Lookup_Table(void) {
     }
 
     return success;
+}
+
+U8 Init_Sliders_Rays(void) {
+    memset(Sliders_Rays, 0, 8 * 64 * sizeof(U64));
+
+    for (Square square = A8; square <= H1; square++) {
+        int rank = square / 8;
+        int file = square % 8;
+
+        int r, f;
+
+        for (r = rank - 1, f = file; r >= 0; r--)
+            Sliders_Rays[square][NORTH] = SetBit(Sliders_Rays[square][NORTH], 1, r*8 + f);
+        for (r = rank - 1, f = file + 1; r >= 0 && f <= 7; r--, f++)
+            Sliders_Rays[square][NE] = SetBit(Sliders_Rays[square][NE], 1, r*8 + f);
+        for (r = rank, f = file + 1; f <= 7; f++)
+            Sliders_Rays[square][EAST] = SetBit(Sliders_Rays[square][EAST], 1, r*8 + f);
+        for (r = rank + 1, f = file + 1; r <= 7 && f <= 7; r++, f++)
+            Sliders_Rays[square][SE] = SetBit(Sliders_Rays[square][SE], 1, r*8 + f);
+        for (r = rank + 1, f = file; r <= 7; r++)
+            Sliders_Rays[square][SOUTH] = SetBit(Sliders_Rays[square][SOUTH], 1, r*8 + f);
+        for (r = rank + 1, f = file - 1; r <= 7 && f >= 0; r++, f--)
+            Sliders_Rays[square][SW] = SetBit(Sliders_Rays[square][SW], 1, r*8 + f);
+        for (r = rank, f = file - 1; f >= 0; f--)
+            Sliders_Rays[square][WEST] = SetBit(Sliders_Rays[square][WEST], 1, r*8 + f);
+        for (r = rank - 1, f = file - 1; r >= 0 && f >= 0; r--, f--)
+            Sliders_Rays[square][NW] = SetBit(Sliders_Rays[square][NW], 1, r*8 + f);
+    }
+
+    return 1;
+}
+
+U8 Init_Database(void) {
+    return Init_Rook_Bishop_Lookup_Table() && Init_Sliders_Rays();
 }
 
 void Print_Knight_Attacks(char *fname) {

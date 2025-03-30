@@ -1,22 +1,8 @@
 #include "ChessGame.h"
 
-void Init_BB(BitBoard *bb) {
-    memset(bb, 0, sizeof(BitBoard)); // Set Bitboard to 0
-
-    for (U8 i = 0; i < 8; i++)
-        bb->wPawns[i].abs_val = bb->bPawns[i].abs_val = PAWN_ABS_VAL;
-    for (U8 i = 0; i < 9; i++)
-        bb->wQueens[i].abs_val = bb->bQueens[i].abs_val = QUEEN_ABS_VAL;
-    for (U8 i = 0; i < 10; i++) {
-        bb->wRooks[i].abs_val = bb->bRooks[i].abs_val = ROOK_ABS_VAL;
-        bb->wKnights[i].abs_val = bb->bKnights[i].abs_val = KNIGHT_ABS_VAL;
-        bb->wBishops[i].abs_val = bb->bBishops[i].abs_val = BISHOP_ABS_VAL;
-    }
-}
-
 U8 FEN_Decode(BitBoard *bb, const char *fen) {
     char *fenDup = malloc(1000);
-    strncpy(fenDup, fen, strlen(fen));
+    strncpy(fenDup, fen, 1000);
 
     char *position = strtok(fenDup, " "); // The first field is the position filed
     if (position == NULL) {
@@ -49,56 +35,46 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
             bb->pos_wAll = SetBit(bb->pos_wAll, 1, square);
 
         if (piece == 'p') {
-            U8 num = bb->num_bPawns++;
-            bb->bPawns[num].values.Position = square;
+            bb->num_bPawns++;
             bb->pos_bPawns = SetBit(bb->pos_bPawns, 1, square);
         }
         else if (piece == 'r') {
-            U8 num = bb->num_bRooks++;
-            bb->bRooks[num].values.Position = square;
+            bb->num_bRooks++;
             bb->pos_bRooks = SetBit(bb->pos_bRooks, 1, square);
         }
         else if (piece == 'n') {
-            U8 num = bb->num_bKnights++;
-            bb->bKnights[num].values.Position = square;
+            bb->num_bKnights++;
             bb->pos_bKnights = SetBit(bb->pos_bKnights, 1, square);
         }
         else if (piece == 'b') {
-            U8 num = bb->num_bBishops++;
-            bb->bBishops[num].values.Position = square;
+            bb->num_bBishops++;
             bb->pos_bBishops = SetBit(bb->pos_bBishops, 1, square);
         }
         else if (piece == 'q') {
-            U8 num = bb->num_bQueens++;
-            bb->bQueens[num].values.Position = square;
+            bb->num_bQueens++;
             bb->pos_bQueens = SetBit(bb->pos_bQueens, 1, square);
         }
         else if (piece == 'k') {
             bb->pos_bKing = SetBit(bb->pos_bKing, 1, square);
         }
         else if (piece == 'P') {
-            U8 num = bb->num_wPawns++;
-            bb->wPawns[num].values.Position = square;
+            bb->num_wPawns++;
             bb->pos_wPawns = SetBit(bb->pos_wPawns, 1, square);
         }
         else if (piece == 'R') {
-            U8 num = bb->num_wRooks++;
-            bb->wRooks[num].values.Position = square;
+            bb->num_wRooks++;
             bb->pos_wRooks = SetBit(bb->pos_wRooks, 1, square);
         }
         else if (piece == 'N') {
-            U8 num = bb->num_wKnights++;
-            bb->wKnights[num].values.Position = square;
+            bb->num_wKnights++;
             bb->pos_wKnights = SetBit(bb->pos_wKnights, 1, square);
         }
         else if (piece == 'B') {
-            U8 num = bb->num_wBishops++;
-            bb->wBishops[num].values.Position = square;
+            bb->num_wBishops++;
             bb->pos_wBishops = SetBit(bb->pos_wBishops, 1, square);
         }
         else if (piece == 'Q') {
-            U8 num = bb->num_wQueens++;
-            bb->wQueens[num].values.Position = square;
+            bb->num_wQueens++;
             bb->pos_wQueens = SetBit(bb->pos_wQueens, 1, square);
         }
         else if (piece == 'K') {
@@ -138,13 +114,13 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
         if ((castle = Castling[i]) == '\0' || castle == '-') break;
 
         if (castle == 'q')
-            bb->bCastle[0] = BLACK_CASTLE_LEFT;
+            bb->castle_right |= 0x8;
         else if (castle == 'k')
-            bb->bCastle[1] = BLACK_CASTLE_RIGHT;
+            bb->castle_right |= 0x4;
         else if (castle == 'Q')
-            bb->wCastle[0] = WHITE_CASTLE_LEFT;
+            bb->castle_right |= 0x2;
         else if (castle == 'K')
-            bb->wCastle[1] = WHITE_CASTLE_RIGHT;
+            bb->castle_right |= 0x1;
         else {
             fprintf(stderr, "\'%c\' (ASCII: %d) is not a valid castling value\n", castle, castle);
             return 0;
@@ -232,6 +208,14 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
 }
 
 U8 Init_Game(BitBoard *bb, const char *fen) {
-    Init_BB(bb);
-    return FEN_Decode(bb, fen);
+    static U8 first = 0;
+    U8 s1, s2;
+
+    if (!first)
+        s1 = Init_Database();
+    memset(bb, 0, sizeof(BitBoard));
+    s2 = FEN_Decode(bb, fen);    
+    first = (s1 && s2) ? first + 1 : 0;
+
+    return s1 && s2;
 }

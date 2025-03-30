@@ -80,6 +80,7 @@ void PrintBoard(U64 b, FILE *f) {
  */
 void Print_BitBoard(const BitBoard bb, Square fs, FILE *f) {
     fprintf(f, "   A B C D E F G H  \n\n");
+    int focus = 0;
 
     for (int rank = 0; rank < 8; rank++) {
         fprintf(f, "%d  ", 8 - rank);
@@ -87,32 +88,60 @@ void Print_BitBoard(const BitBoard bb, Square fs, FILE *f) {
         for (int file = 0; file < 8; file++) {
             Square square = (Square) (rank*8 + file);
 
-            if (GetBit(bb.pos_bPawns, square))
-                fprintf(f, COLOR(GREEN)"P "COLOR(RESET));
-            else if (GetBit(bb.pos_bRooks, square))
-                fprintf(f, COLOR(GREEN)"R "COLOR(RESET));
-            else if (GetBit(bb.pos_bKnights, square))
-                fprintf(f, COLOR(GREEN)"N "COLOR(RESET));
-            else if (GetBit(bb.pos_bBishops, square))
-                fprintf(f, COLOR(GREEN)"B "COLOR(RESET));
-            else if (GetBit(bb.pos_bQueens, square))
-                fprintf(f, COLOR(GREEN)"Q "COLOR(RESET));
-            else if (GetBit(bb.pos_bKing, square))
-                fprintf(f, COLOR(GREEN)"K "COLOR(RESET));
-            else if (GetBit(bb.pos_wPawns, square))
-                fprintf(f, COLOR(CYAN)"P "COLOR(RESET));
-            else if (GetBit(bb.pos_wRooks, square))
-                fprintf(f, COLOR(CYAN)"R "COLOR(RESET));
-            else if (GetBit(bb.pos_wKnights, square))
-                fprintf(f, COLOR(CYAN)"N "COLOR(RESET));
-            else if (GetBit(bb.pos_wBishops, square))
-                fprintf(f, COLOR(CYAN)"B "COLOR(RESET));
-            else if (GetBit(bb.pos_wQueens, square))
-                fprintf(f, COLOR(CYAN)"Q "COLOR(RESET));
-            else if (GetBit(bb.pos_wKing, square))
-                fprintf(f, COLOR(CYAN)"K "COLOR(RESET));
+            if (fs == NOT_A_SQUARE)
+                focus = 0;
             else
-                fprintf(f, "0 ");
+                if (GetBit(bb.atk_on_each_square[fs], square) || GetBit(bb.pawn_moves_on_each_square[fs], square))
+                    focus = 1;
+                else
+                    focus = 0;
+
+            if (GetBit(bb.pos_bPawns, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"P "COLOR(RESET)) :
+                                  fprintf(f, COLOR(GREEN)"P "COLOR(RESET));
+            else if (GetBit(bb.pos_bRooks, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"R "COLOR(RESET)) :
+                                  fprintf(f, COLOR(GREEN)"R "COLOR(RESET));
+            else if (GetBit(bb.pos_bKnights, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"N "COLOR(RESET)) :
+                                  fprintf(f, COLOR(GREEN)"N "COLOR(RESET));
+            else if (GetBit(bb.pos_bBishops, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"B "COLOR(RESET)) :
+                                  fprintf(f, COLOR(GREEN)"B "COLOR(RESET));
+            else if (GetBit(bb.pos_bQueens, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"Q "COLOR(RESET)) :
+                                  fprintf(f, COLOR(GREEN)"Q "COLOR(RESET));
+            else if (GetBit(bb.pos_bKing, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"K "COLOR(RESET)) :
+                                  fprintf(f, COLOR(GREEN)"K "COLOR(RESET));
+            else if (GetBit(bb.pos_wPawns, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"P "COLOR(RESET)) :
+                                  fprintf(f, COLOR(CYAN)"P "COLOR(RESET));
+            else if (GetBit(bb.pos_wRooks, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"R "COLOR(RESET)) :
+                                  fprintf(f, COLOR(CYAN)"R "COLOR(RESET));
+            else if (GetBit(bb.pos_wKnights, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"N "COLOR(RESET)) :
+                                  fprintf(f, COLOR(CYAN)"N "COLOR(RESET));
+            else if (GetBit(bb.pos_wBishops, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"B "COLOR(RESET)) :
+                                  fprintf(f, COLOR(CYAN)"B "COLOR(RESET));
+            else if (GetBit(bb.pos_wQueens, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"Q"COLOR(RESET)) :
+                                  fprintf(f, COLOR(CYAN)"Q "COLOR(RESET));
+            else if (GetBit(bb.pos_wKing, square))
+                (focus) ?  fprintf(f, COLOR(YELLOW)"K"COLOR(RESET)) :
+                                  fprintf(f, COLOR(CYAN)"K "COLOR(RESET));
+            else {
+                if (fs == NOT_A_SQUARE)
+                    fprintf(f, "0 ");
+                else {
+                    if (GetBit(bb.atk_on_each_square[fs], square) || GetBit(bb.pawn_moves_on_each_square[fs], square))
+                        fprintf(f, COLOR(YELLOW)"1 "COLOR(RESET));
+                    else
+                        fprintf(f, "0 ");
+                }
+            }
         }
         fprintf(f, " %d \n", 8 - rank);
     }
@@ -129,14 +158,14 @@ void Print_BitBoard(const BitBoard bb, Square fs, FILE *f) {
 
     fprintf(f, "Castling Rights: ");
 
-    if (bb.bCastle[0] != 0ULL)
+    if (bb.castle_right & 1)
         fprintf(f, COLOR(GREEN)"K "COLOR(RESET));
-    if (bb.bCastle[1] != 0ULL)
+    if (bb.castle_right & 2)
         fprintf(f, COLOR(GREEN)"Q "COLOR(RESET));
-    if (bb.wCastle[0] != 0ULL)
-        fprintf(f, COLOR(CYAN)"K "COLOR(RESET));
-    if (bb.wCastle[1] != 0ULL)
-        fprintf(f, COLOR(CYAN)"Q "COLOR(RESET));
+    if (bb.castle_right & 4)
+        fprintf(f, COLOR(CYAN)"k "COLOR(RESET));
+    if (bb.castle_right & 8)
+        fprintf(f, COLOR(CYAN)"q "COLOR(RESET));
 
     fprintf(f, "\nEnPassen Map:\n\n");
     PrintBoard(bb.EnPassen, f);
@@ -163,6 +192,77 @@ void FEN_Debug(FILE *fout) {
         printf("\n*** Press any key to enter another FEN ***\n");
         getchar();
     }
+    free(fen);
+}
+
+/* A more general debug functions. Modify at your own will to test for any function
+ * 
+ * This function automatically print the test result to stdout
+ */
+void Debug() {
+    BitBoard bb;
+    char *fs = malloc(1000);
+    char *fen = malloc(1000);
+
+    while (1) {
+        system("clear");
+        memset(fen, '\0', 1000);
+        
+        printf("Enter FEN: ");
+        fgets(fen, 1000, stdin);
+        fen[strlen(fen) - 1] = '\0'; // Get rid of the trailing newline char
+        
+        Init_Game(&bb, fen);
+        Print_BitBoard(bb, NOT_A_SQUARE, stdout);
+
+        while (1) {
+            Square square;
+            while (1) {
+                memset(fs, '\0', 1000);
+                printf("\nChoose a square: ");
+                fgets(fs, 1000, stdin);
+                fs[strlen(fs) - 1] = '\0'; // Get rid of the trailing newline char
+                if (strlen(fs) != 2) {
+                    fprintf(stderr, "Too many input! Please try again!\n\n");
+                    continue;
+                }
+
+                int file = ( 'a' <= fs[0] && fs[0] <= 'h') ? fs[0] - 'a' : fs[0] - 'A';
+                int rank = 7 - (fs[1] - '1');
+
+                if (!(0 <= file && file <= 7) || !(0 <= rank && rank <= 7)) {
+                    fprintf(stderr, "Invalid input! Please try again!\n\n");
+                    continue;
+                }
+
+                square = (rank*8) + file;
+                break;
+            }
+
+            /* *** ENTER WHAT YOU WANNA TEST HERE *** */
+            Gen_Rook_Attacks(&bb, W);
+            Gen_Rook_Attacks(&bb, B);
+
+
+            /* ************************************* */
+            
+            Print_BitBoard(bb, square, stdout);
+            printf("\n*** Enter \'n\' for a new fen! Otherwise enter any key for a new fs ***\n");
+            if (getchar() == 'n')
+                break;
+            else {
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF); // Clear input buffer
+                system("clear");
+                Print_BitBoard(bb, NOT_A_SQUARE, stdout);
+            }       
+        }
+        
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF); // Clear input buffer
+    }
+
+    free(fs);
     free(fen);
 }
 

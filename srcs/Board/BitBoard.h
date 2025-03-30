@@ -18,12 +18,14 @@
 /* Edges of the board, defined as the first as last rank/file */
 #define EDGES 0xff818181818181ffULL
 
-/* Defines the castling sequences */
-
-#define BLACK_CASTLE_RIGHT 0x7000000000000000ULL
-#define BLACK_CASTLE_LEFT  0x0600000000000000ULL
-#define WHITE_CASTLE_RIGHT 0x0000000000000070ULL
-#define WHITE_CASTLE_LEFT  0x0000000000000006ULL
+/* Defines the castling sequences squares
+ * e.g., For white king side:
+ *      K * * R
+ */
+#define BLACK_CASTLE_QUEEN_SEQUENCES 0xf800000000000000ULL
+#define BLACK_CASTLE_KING_SEQUENCES  0x0f00000000000000ULL
+#define WHITE_CASTLE_QUEEN_SEQUENCES 0x00000000000000f8ULL
+#define WHITE_CASTLE_KING_SEQUENCES  0x000000000000000fULL
 
 #define B -1.0f // Black side
 #define W 1.0f  // White side
@@ -70,32 +72,9 @@ typedef enum Square {
     NOT_A_SQUARE
 } Square;
 
-typedef struct Values {
-    float rev_val;       // Relative value of the piece right now, as evaluated by a chess engine for example
-    U8  numMoves;        // Number of available moves for this piece
-    Square Position;        // Current position of the piece
-    U64 attacks;         // Its available attacks  
-} Values;
-
-/* Since pawn has distince moves and attacks, need a different struct type to represent it. This is the largest type in all pieces struct type */
-typedef struct Pawn {
-    float abs_val; // Absolute value of this piece.
-    Values values;
-    U64 moves;
-} Pawn;
-
-/* Rook also needs to be defined distinctively since we need to know which castling side does it link to */
-typedef struct Rook {
-    float abs_val; // Absolute value of this piece
-    Values values;
-    U8 castling_side; // Which casling side does this rook link to. 0 for left, 1 for right
-} Rook;
-
-/* Other pieces. That includes knights, bishops, and queens. King does not need a struct type since there can only be 1 king */
-typedef struct Piece {
-    float abs_val;
-    Values values;
-} Piece;
+typedef enum Direction {
+    NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW
+} Direction;
 
 typedef struct BitBoard {
     
@@ -129,37 +108,15 @@ typedef struct BitBoard {
     U8 num_bBishops;
     U8 num_bQueens;
 
-    /* There would be a maximum of 10 rooks, knights and bishops, 9 queens, 8 pawns and 1 king */
-    Pawn  wPawns[8];
-    Rook wRooks[10];
-    Piece wKnights[10];
-    Piece wBishops[10];
-    Piece wQueens[9];
+    /* Attack map on each square of the chess board */
+    U64 atk_on_each_square[64];
 
-    Pawn  bPawns[8];
-    Rook bRooks[10];
-    Piece bKnights[10];
-    Piece bBishops[10];
-    Piece bQueens[9];
-
-    /* Since there is only 1 king, we don't need to redefine it as type 'Piece' here */
-
-    /* All pieces regular possible attacks */
-    U64 atk_wPawns;
-    U64 atk_wRooks;
-    U64 atk_wKnights;
-    U64 atk_wBishops;
-    U64 atk_wQueens;
-    U64 atk_wKing;
+    /* Attack map of white and black pieces */
     U64 atk_wAll;
-
-    U64 atk_bPawns;
-    U64 atk_bRooks;
-    U64 atk_bKnights;
-    U64 atk_bBishops;
-    U64 atk_bQueens;
-    U64 atk_bKing;
     U64 atk_bAll;
+
+    /* ALl pawn moves map on each square of the chess board */
+    U64 pawn_moves_on_each_square[64];
 
     /* All possible X-Ray attacks */
     U64 atk_wXray;
@@ -168,11 +125,8 @@ typedef struct BitBoard {
     /* Pawn EnPassen for both side */
     U64 EnPassen;
 
-    /* Catleing left and right positions for the king. A value of 0 means it is not possible to castle on that side anymore. 
-     * Index 0 -> Left castle, index 1 -> right castle.
-     */
-    U64 wCastle[2];
-    U64 bCastle[2];
+    /* Castle right for both sides. From LSB to MSB, King -> Queen side for White -> Black */
+    U8 castle_right;
 
     /* The pin positions of each side. If a piece is pin then it cannot move */
     U64 wPins;

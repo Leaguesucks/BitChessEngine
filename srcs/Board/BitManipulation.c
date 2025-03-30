@@ -52,3 +52,13 @@ Square Get_LSMB(U64 b, U8 Bit) {
     else
         return (Square) (H1 - __tzcnt_u64(~b));
 }
+
+Square Get_MSMB(U64 b, U8 Bit) {
+    if (b == 0ULL)
+        return NOT_A_SQUARE;
+
+    if (Bit)
+        return (Square) __lzcnt64(b);
+    else
+        return (Square) __lzcnt64(~b);
+}

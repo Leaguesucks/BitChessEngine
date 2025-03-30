@@ -13,7 +13,9 @@ int main(void) {
     //     getchar();
     // }
 
-    FEN_Debug(stdout);
+    //FEN_Debug(stdout);
+    Debug();
+    //printf("%ld\n", sizeof(BitBoard));
 
     return 0;
 }

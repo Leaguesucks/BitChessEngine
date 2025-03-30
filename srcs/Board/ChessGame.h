@@ -14,12 +14,6 @@
 /* Begining positons of a chess game in FEN */
 #define BEGINING "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w QKqk - 0 0"
 
-/* Init a bitboard
- * 
- * Para: bb -> The bitboard to initialize
- */
-void Init_BB(BitBoard *bb);
-
 /* Setup the bit chessboard based on a given FEN.
  * NOTE: For the sake of simplicity, we have not checked for invalid FEN (yet).
  *       That being said, there are still very minor error checkings in this version

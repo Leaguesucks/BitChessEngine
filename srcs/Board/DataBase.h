@@ -44,6 +44,9 @@ extern U64 Bishop_Attacks[64][512];
 /* All possible attacks of each square of the rook */
 extern U64 Rook_Attacks[64][4096];
 
+/* Slider pieces all possible attacks for each square in each directions */
+extern U64 Sliders_Rays[64][8];
+
 /* All possible attacks for each square of the knights */
 extern const U64 KNIGHT_ATTACKS[64];
 
@@ -181,9 +184,21 @@ void Print_Relevant_Rook_Bishop_Attacks(char* fname);
  * also check if the magic numbers works (i.e., it should almost be a perfect hash function
  * that lead to no collision)
  *
- * Return: 1 if success, 0 otherwise
+ * Return: non-zero if success, 0 otherwise
  */
 U8 Init_Rook_Bishop_Lookup_Table(void);
+
+/* Init the slider pieces ray attacks matrix 
+ *
+ * Return: non-zero if success, 0 otherwise
+ */
+U8 Init_Sliders_Rays(void);
+
+/* Init all necessary arrays in the database
+ *
+ * Return: non-zero if success, 0 otherwise
+ */
+U8 Init_Database(void);
 
 /* Calculate all possible knight attacks for each square on the chess board and print
  * the result to fname, which is an output file.
