@@ -27,9 +27,6 @@
 #define WHITE_CASTLE_QUEEN_SEQUENCES 0x00000000000000f8ULL
 #define WHITE_CASTLE_KING_SEQUENCES  0x000000000000000fULL
 
-#define B -1.0f // Black side
-#define W 1.0f  // White side
-
 /* Chess pieces absolute values as evaluated by AlphaZero in 2020 */
 
 /* Pawn absolute value */
@@ -54,6 +51,9 @@
 #define CASTLE_LEFT -1;
 
 /* ***************************** */
+
+static const float B = (-1.0f); // Black side
+static const float W = (1.0f);  // White side
 
 typedef unsigned char   U8;
 typedef unsigned short U16;

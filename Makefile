@@ -1,48 +1,46 @@
-# I know it looks unprofessional but I aim for simplicity and 
-# understandability
-
 CC = gcc
-BFLAGS = $(CFLAGS) -I$(BPATH)
-CFLAGS = -Wall -g -mbmi -mlzcnt
+CFLAGS = -Wall -g -mbmi -mlzcnt $(shell sdl2-config --cflags)
 BPATH = srcs/Board
+GPATH = srcs/GUI
 TPATH = Test
 OPATH = bin
 RPATH = resources
-LDFLAGS = -lm
-TARGETS = $(OPATH)/magic $(OPATH)/debug
-DEBUGOBJ = $(OPATH)/debug.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o $(OPATH)/MoveGen.o $(OPATH)/ChessGame.o
+LDFLAGS = -lm $(shell sdl2-config --libs)
 
-all: odir $(TARGETS)
+# List of object files
+OBJS = $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o $(OPATH)/MoveGen.o $(OPATH)/ChessGame.o
+DEBUGOBJ = $(OPATH)/debug.o $(OBJS) $(OPATH)/ChessGUI.o
+MAGICOBJ = $(OPATH)/magic.o $(OBJS)
 
-odir:
+# Targets
+all: $(OPATH) $(OPATH)/magic $(OPATH)/debug
+
+$(OPATH):
 	mkdir -p $(OPATH)
 
-$(OPATH)/magic: $(OPATH)/magic.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o
-	$(CC) $(CFLAGS) $(OPATH)/magic.o $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o -o $(OPATH)/magic $(LDFLAGS)
-
-$(OPATH)/magic.o: $(BPATH)/MagicGen.c $(BPATH)/MagicGen.h
-	$(CC) $(CFLAGS) -c $(BPATH)/MagicGen.c -o $(OPATH)/magic.o
+$(OPATH)/magic: $(MAGICOBJ)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OPATH)/debug: $(DEBUGOBJ)
-	$(CC) $(CFLAGS) $(DEBUGOBJ) -o $(OPATH)/debug $(LDFLAGS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(OPATH)/debug.o: $(TPATH)/debug.c $(TPATH)/debug.h $(BPATH)/BitBoard.h
-	$(CC) $(CFLAGS) -c $(TPATH)/debug.c -o $(OPATH)/debug.o
+# Pattern rule for object files
 
-$(OPATH)/ChessGame.o: $(BPATH)/ChessGame.c $(BPATH)/ChessGame.h $(BPATH)/BitBoard.h
-	$(CC) $(CFLAGS) -c $(BPATH)/ChessGame.c -o $(OPATH)/ChessGame.o
+$(OPATH)/ChessGUI.o: $(GPATH)/ChessGUI.c $(GPATH)/ChessGUI.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OPATH)/MoveGen.o: $(BPATH)/MoveGen.c $(BPATH)/MoveGen.h $(BPATH)/BitBoard.h
-	$(CC) $(CFLAGS) -c $(BPATH)/MoveGen.c -o $(OPATH)/MoveGen.o
+# Compile all header files in Board directory
+$(OPATH)/%.o: $(BPATH)/%.c $(BPATH)/%.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OPATH)/DataBase.o: $(BPATH)/DataBase.c $(BPATH)/DataBase.h $(BPATH)/BitBoard.h
-	$(CC) $(CFLAGS) -c $(BPATH)/DataBase.c -o $(OPATH)/DataBase.o
+$(OPATH)/debug.o: $(TPATH)/debug.c $(TPATH)/debug.h $(BPATH)/BitBoard.h $(GPATH)/ChessGUI.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OPATH)/BitManipulation.o: $(BPATH)/BitManipulation.c $(BPATH)/BitManipulation.h $(BPATH)/BitBoard.h
-	$(CC) $(CFLAGS) -c $(BPATH)/BitManipulation.c -o $(OPATH)/BitManipulation.o
+$(OPATH)/magic.o: $(BPATH)/MagicGen.c $(BPATH)/MagicGen.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm $(OPATH)/*.o $(TARGETS)
+	rm -f $(OPATH)/*.o $(OPATH)/magic $(OPATH)/debug
 
 cleantxt:
-	rm  $(RPATH)/*.txt
+	rm -f $(RPATH)/*.txt

@@ -2,6 +2,7 @@
 #define _DEBUG_H
 
 #include "../srcs/Board/ChessGame.h"
+#include "../srcs/GUI/ChessGUI.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -264,6 +265,14 @@ void Debug() {
 
     free(fs);
     free(fen);
+}
+
+/* Debug the GUI */
+void Debug_GUI() {
+    Game game;
+
+    sdl_init(&game);
+    sdl_chessGame(&game);
 }
 
 #endif
