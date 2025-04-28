@@ -18,7 +18,7 @@
  */
 U64 SetBit(U64 b, int ns, ...);
 
-/* Return and remove the bit at a given square on the bitboard 
+/* Remove the bit at a given square on the bitboard 
  *
  * Para: b   -> The bitboard
  *       ns  -> Number of square bit to pop

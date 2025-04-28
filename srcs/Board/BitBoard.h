@@ -27,25 +27,27 @@
 #define WHITE_CASTLE_QUEEN_SEQUENCES 0x00000000000000f8ULL
 #define WHITE_CASTLE_KING_SEQUENCES  0x000000000000000fULL
 
+
+
 /* Chess pieces absolute values as evaluated by AlphaZero in 2020 */
 
 /* Pawn absolute value */
-#define PAWN_ABS_VAL 1.0f;
+#define PAWN_ABS_VAL 1.0f
 
 /* Rook absolute value */
-#define ROOK_ABS_VAL 5.63f;
+#define ROOK_ABS_VAL 5.63f
 
 /* Knight absolute value */
-#define KNIGHT_ABS_VAL 3.05f;
+#define KNIGHT_ABS_VAL 3.05f
 
 /* Bishop absolute value */
-#define BISHOP_ABS_VAL 3.33f;
+#define BISHOP_ABS_VAL 3.33f
 
 /* Queen absolute value */
-#define QUEEN_ABS_VAL 9.5f;
+#define QUEEN_ABS_VAL 9.5f
 
 /* King absolute value */
-#define KING_ABS_VAL 1e6f;
+#define KING_ABS_VAL 1e6f
 
 #define CASTLE_RIGHT 1;
 #define CASTLE_LEFT -1;
@@ -115,7 +117,7 @@ typedef struct BitBoard {
     U64 atk_wAll;
     U64 atk_bAll;
 
-    /* ALl pawn moves map on each square of the chess board */
+    /* All pawn moves map on each square of the chess board */
     U64 pawn_moves_on_each_square[64];
 
     /* All possible X-Ray attacks */
@@ -125,7 +127,10 @@ typedef struct BitBoard {
     /* Pawn EnPassen for both side */
     U64 EnPassen;
 
-    /* Castle right for both sides. From LSB to MSB, King -> Queen side for White -> Black */
+    /* Castle right for both sides. From LSB to MSB, King -> Queen side for White -> Black 
+     * e.g., 0b00001111 means both side has castle right to both King and Queen side
+     *       0b00000111 means Black has lost its right to castle Queen side
+     */
     U8 castle_right;
 
     /* The pin positions of each side. If a piece is pin then it cannot move */

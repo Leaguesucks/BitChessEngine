@@ -241,8 +241,8 @@ void Debug() {
             }
 
             /* *** ENTER WHAT YOU WANNA TEST HERE *** */
-            Gen_Rook_Attacks(&bb, W);
-            Gen_Rook_Attacks(&bb, B);
+            Gen_All_Attacks(&bb, W);
+            Gen_All_Attacks(&bb, B);
 
 
             /* ************************************* */
