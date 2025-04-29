@@ -43,7 +43,7 @@ U64 Find_Magic_Number(Square sq, magic_piece mp) {
         U64 magic_number = random_U64_with_more_1sBit(); // Generate a random magic number
 
         // Skip inefficient magic numbers
-        if (CountBits((relevant_attacks * magic_number) & 0xFF00000000000000, 1) < 6)
+        if (CountBits((relevant_attacks * magic_number) & 0xFF00000000000000) < 6)
             continue;
 
         memset(used_attacks, 0ULL, 4096 * sizeof(U64));

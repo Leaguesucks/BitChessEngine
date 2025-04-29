@@ -8,25 +8,23 @@
 #include <x86intrin.h> // C/C++ (GCC, Clang)
 #include "BitBoard.h"
 
-/* Set the correspond bit to a square on the bitboard
+/* Set the correspond square to bit '1' on the bitboard
  *
- * Para: b   -> The bitboard
- *       ns  -> Number of bit to set == length of s
- *       ... -> The masked square e.g., A1, A2, ...
+ * Para: b      -> The bitboard
+ *       square -> The masked square e.g., A1, A2, ...
  * 
  * Return: An U64 number with corresponding masked bit
  */
-U64 SetBit(U64 b, int ns, ...);
+U64 SetBit(U64 b, Square square);
 
-/* Remove the bit at a given square on the bitboard 
+/* Remove the '1' bit at a given square on the bitboard 
  *
- * Para: b   -> The bitboard
- *       ns  -> Number of square bit to pop
- *       ... -> The squares to pop e.g., A1, A2, ...
+ * Para: b      -> The bitboard
+ *       square -> The square to pop e.g., A1, A2, ...
  * 
  * Return: A new bit board with the chosen bits poped
  */
-U64 PopBit(U64 b, int ns, ...);
+U64 PopBit(U64 b, Square square);
 
 /* Return the bit on a given square 
  *
@@ -37,31 +35,28 @@ U64 PopBit(U64 b, int ns, ...);
  */
 U8 GetBit(U64 b, Square sq);
 
-/* Count the number of interested bits (0 or 1) in a given bitboard 
+/* Count the number of '1s' in a given bitboard 
  *
  * Para: b   -> The bit board
- *       Bit -> 0 or 1: The interested bit
  * 
- * Return: Number of interested bits in the bitboard
+ * Return: Number of '1s' in the bitboard
  */
-U8 CountBits(U64 b, U8 Bit);
+U8 CountBits(U64 b);
 
-/* Return the LSB Square that has been set to Bit
+/* Return the LSB Square that has been set to '1'
  *
  * Para: b   -> The bitboard
- *       Bit -> The interested set bit
  * 
- * Return: The LSB square that has been set to Bit
+ * Return: The LSB square that has been set to '1'
  */
-Square Get_LSMB(U64 b, U8 Bit);
+Square Get_LSMB(U64 b);
 
-/* Return the MSB square that has been set to Bit
+/* Return the MSB square that has been set to '1''
  *
  * Para: b   -> The bitboard
- *       Bit -> The interested set Bit
  * 
- * Return: The MSB square that has been set to Bit
+ * Return: The MSB square that has been set to '1'
  */
-Square Get_MSMB(U64 b, U8 Bit);
+Square Get_MSMB(U64 b);
 
 #endif

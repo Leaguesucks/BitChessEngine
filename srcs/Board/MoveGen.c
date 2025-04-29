@@ -10,13 +10,13 @@ U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const floa
         U64 E_Blockers = Sliders_Rays[pos][EAST]  & blockers;
     
         if (N_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_LSMB(N_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_LSMB(N_Blockers));
         if (S_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_MSMB(S_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_MSMB(S_Blockers));
         if (W_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_LSMB(W_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_LSMB(W_Blockers));
         if (E_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_MSMB(E_Blockers, 1));    
+            firstBlockers = SetBit(firstBlockers, Get_MSMB(E_Blockers));    
     }
     else if (slider == BISHOP_ABS_VAL) {
         U64 NE_Blockers = Sliders_Rays[pos][NE] & blockers;
@@ -25,13 +25,13 @@ U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const floa
         U64 SW_Blockers = Sliders_Rays[pos][SW] & blockers;
 
         if (NE_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_LSMB(NE_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_LSMB(NE_Blockers));
         if (NW_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_LSMB(NW_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_LSMB(NW_Blockers));
         if (SE_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_MSMB(SE_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_MSMB(SE_Blockers));
         if (SW_Blockers)
-            firstBlockers = SetBit(firstBlockers, 1, Get_MSMB(SW_Blockers, 1));
+            firstBlockers = SetBit(firstBlockers, Get_MSMB(SW_Blockers));
     }
     else // No need to account for the Queen or other pieces
         return 0ULL;
@@ -107,7 +107,7 @@ U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const float side) {
 
         for (int i = 1; i <= num_moves; i++) 
             if ((newRank = rank - i) >= 0) {
-                moves = SetBit(moves, 1, (Square) (newRank * 8 + file));
+                moves = SetBit(moves, (Square) (newRank * 8 + file));
                 if (moves & blockers) break;
             }
     }
@@ -116,7 +116,7 @@ U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const float side) {
 
         for (int i = 1; i <= num_moves; i++)
             if ((newRank = rank + i) <= 7) {
-                moves = SetBit(moves, 1, (Square) (newRank * 8 + file));
+                moves = SetBit(moves, (Square) (newRank * 8 + file));
                 if (moves & blockers) break;
             }
     }
@@ -155,15 +155,15 @@ U64 Gen_King_Moves(const Square pos, const U64 blockers, const U64 ecovered, con
     }
 
     U64 moves = 0ULL;
-    U64 local_blockers = PopBit(blockers, 1, pos); // Remove the King's position from the blockers map
+    U64 local_blockers = PopBit(blockers, pos); // Remove the King's position from the blockers map
 
     if (KC)
         if ((Kcastling_sequence & (local_blockers | ecovered)) == 0) // There is no obstacle on the King side
-            moves = SetBit(moves, 1, KMove);
+            moves = SetBit(moves, KMove);
     
     if (QC)
         if ((Qcastling_sequence & (local_blockers | ecovered)) == 0) // There is no obstacle on the Queen side
-            moves = SetBit(moves, 1, QMove);
+            moves = SetBit(moves, QMove);
 
     return moves;
 }
@@ -230,52 +230,52 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
 
     /* Find attacks for the Rooks */
     for (U8 i = 0; i < numRooks; i++) {
-        pos = Get_LSMB(pos_Rooks, 1);
-        pos_Rooks = PopBit(pos_Rooks, 1, pos);
+        pos = Get_LSMB(pos_Rooks);
+        pos_Rooks = PopBit(pos_Rooks, pos);
         bb->atk_on_each_square[pos] = Gen_Rook_Attacks(pos, pos_Enemies, pos_Allies, aCovered);
-        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos], 1);
+        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
     }
 
     /* Find attacks for the Bishops */
     for (U8 i = 0; i < numBishops; i++) {
-        pos = Get_LSMB(pos_Bishops, 1);
-        pos_Bishops = PopBit(pos_Bishops, 1, pos);
+        pos = Get_LSMB(pos_Bishops);
+        pos_Bishops = PopBit(pos_Bishops, pos);
         bb->atk_on_each_square[pos] = Gen_Bishop_Attacks(pos, pos_Enemies, pos_Allies, aCovered);
-        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos], 1);
+        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
     }
 
     /* Find attacks for the Queens */
     for (U8 i = 0; i < numQueens; i++) {
-        pos = Get_LSMB(pos_Queens, 1);
-        pos_Queens = PopBit(pos_Queens, 1, pos);
+        pos = Get_LSMB(pos_Queens);
+        pos_Queens = PopBit(pos_Queens, pos);
         bb->atk_on_each_square[pos] = (Gen_Rook_Attacks(pos, pos_Enemies, pos_Allies, aCovered) | Gen_Bishop_Attacks(pos, pos_Enemies, pos_Allies, aCovered));
-        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos], 1);
+        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
     }
 
     /* Find attacks for the Knights */
     for (U8 i = 0; i < numKnights; i++) {
-        pos = Get_LSMB(pos_Knights, 1);
-        pos_Knights = PopBit(pos_Knights, 1, pos);
+        pos = Get_LSMB(pos_Knights);
+        pos_Knights = PopBit(pos_Knights, pos);
         bb->atk_on_each_square[pos] = Gen_Knight_Attacks(pos, pos_Allies, aCovered);
-        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos], 1);
+        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
     }
 
     /* Find moves and attacks for the Pawns */
     for (U8 i = 0; i < numPawns; i++) {
-        pos = Get_LSMB(pos_Pawns, 1);
-        pos_Pawns = PopBit(pos_Pawns, 1, pos);
+        pos = Get_LSMB(pos_Pawns);
+        pos_Pawns = PopBit(pos_Pawns, pos);
         bb->atk_on_each_square[pos]   = Gen_Pawn_Attacks(pos, pos_Enemies, pos_Allies, bb->EnPassen, side, aCovered);
         bb->moves_on_each_square[pos] = Gen_Pawn_Moves(pos, pos_Enemies | pos_Allies, side);
-        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos], 1);
-        atk_counts += (U16) CountBits(bb->moves_on_each_square[pos], 1);
+        atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
+        atk_counts += (U16) CountBits(bb->moves_on_each_square[pos]);
     }
 
     /* Find moves and attacks for the King */
-    pos = Get_LSMB(pos_King, 1);
+    pos = Get_LSMB(pos_King);
     bb->atk_on_each_square[pos]   = Gen_King_Attacks(pos, pos_Allies, eCovered, aCovered);
     bb->moves_on_each_square[pos] = Gen_King_Moves(pos, pos_Enemies | pos_Allies, eCovered, K_Castle, Q_Castle, side);
-    atk_counts += (U16) CountBits(bb->atk_on_each_square[pos], 1);
-    atk_counts += (U16) CountBits(bb->moves_on_each_square[pos], 1);
+    atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
+    atk_counts += (U16) CountBits(bb->moves_on_each_square[pos]);
 
     return atk_counts;
 }

@@ -579,10 +579,10 @@ U64 GetRelevantFreeBishopAttacks(Square sq) {
     int curRk = (int) (sq / 8); // Curren rank (0-7, top to bottom)
     int curFl = (int) (sq % 8); // Current file (0-7, left to right)
 
-    for (int rank = curRk - 1, file = curFl - 1; rank >= 1 && file >= 1; rank--, file--) attacks = SetBit(attacks, 1, (Square) (file + 8*rank)); // SW
-    for (int rank = curRk - 1, file = curFl + 1; rank >= 1 && file <= 6; rank--, file++) attacks = SetBit(attacks, 1, (Square) (file + 8*rank)); // SE
-    for (int rank = curRk + 1, file = curFl - 1; rank <= 6 && file >= 1; rank++, file--) attacks = SetBit(attacks, 1, (Square) (file + 8*rank)); // NW
-    for (int rank = curRk + 1, file = curFl + 1; rank <= 6 && file <= 6; rank++, file++) attacks = SetBit(attacks, 1, (Square) (file + 8*rank)); // NE
+    for (int rank = curRk - 1, file = curFl - 1; rank >= 1 && file >= 1; rank--, file--) attacks = SetBit(attacks, (Square) (file + 8*rank)); // SW
+    for (int rank = curRk - 1, file = curFl + 1; rank >= 1 && file <= 6; rank--, file++) attacks = SetBit(attacks, (Square) (file + 8*rank)); // SE
+    for (int rank = curRk + 1, file = curFl - 1; rank <= 6 && file >= 1; rank++, file--) attacks = SetBit(attacks, (Square) (file + 8*rank)); // NW
+    for (int rank = curRk + 1, file = curFl + 1; rank <= 6 && file <= 6; rank++, file++) attacks = SetBit(attacks, (Square) (file + 8*rank)); // NE
 
     return attacks;
 }
@@ -593,10 +593,10 @@ U64 GetRelevantFreeRookAttacks(Square sq) {
     int curRk = (int) (sq / 8); // Current rank (0-7, top to bottom)
     int curFl = (int) (sq % 8); // Current file (0-7, left to right)
 
-    for (int file = curFl - 1, decrement = 1; file >= 1; file--, decrement++) attacks = SetBit(attacks, 1, (Square) (sq - decrement)); // Left
-    for (int file = curFl + 1, increment = 1; file <= 6; file++, increment++) attacks = SetBit(attacks, 1, (Square) (sq + increment)); // Right
-    for (int rank = curRk - 1, decrement = 1; rank >= 1; rank--, decrement++) attacks = SetBit(attacks, 1, (Square) (sq - 8*decrement)); // Down
-    for (int rank = curRk + 1, increment = 1; rank <= 6; rank++, increment++) attacks = SetBit(attacks, 1, (Square) (sq + 8*increment)); // Up
+    for (int file = curFl - 1, decrement = 1; file >= 1; file--, decrement++) attacks = SetBit(attacks, (Square) (sq - decrement)); // Left
+    for (int file = curFl + 1, increment = 1; file <= 6; file++, increment++) attacks = SetBit(attacks, (Square) (sq + increment)); // Right
+    for (int rank = curRk - 1, decrement = 1; rank >= 1; rank--, decrement++) attacks = SetBit(attacks, (Square) (sq - 8*decrement)); // Down
+    for (int rank = curRk + 1, increment = 1; rank <= 6; rank++, increment++) attacks = SetBit(attacks, (Square) (sq + 8*increment)); // Up
 
     return attacks;
 }
@@ -609,19 +609,19 @@ U64 GetBlockedBishopAttacks(U64 b, Square sq) {
 
     for (int rank = curRk - 1, file = curFl - 1; rank >= 0 && file >= 0; rank--, file--) { // SW
         if (GetBit(b, (Square) (file + 8*rank)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (file + 8*rank)); 
+        attacks = SetBit(attacks, (Square) (file + 8*rank)); 
     }
     for (int rank = curRk - 1, file = curFl + 1; rank >= 0 && file <= 7; rank--, file++) { // SE
         if (GetBit(b, (Square) (file + 8*rank)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (file + 8*rank));
+        attacks = SetBit(attacks, (Square) (file + 8*rank));
     }
     for (int rank = curRk + 1, file = curFl - 1; rank <= 7 && file >= 0; rank++, file--) { // NW
         if (GetBit(b, (Square) (file + 8*rank)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (file + 8*rank));
+        attacks = SetBit(attacks, (Square) (file + 8*rank));
     }
     for (int rank = curRk + 1, file = curFl + 1; rank <= 7 && file <= 7; rank++, file++) { // NE
         if (GetBit(b, (Square) (file + 8*rank)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (file + 8*rank));
+        attacks = SetBit(attacks, (Square) (file + 8*rank));
     }
 
     return attacks;
@@ -635,19 +635,19 @@ U64 GetBlockedRookAttacks(U64 b, Square sq) {
 
     for (int file = curFl - 1, decrement = 1; file >= 0; file--, decrement++) {
         if (GetBit(b, (Square) (sq - decrement)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (sq - decrement)); 
+        attacks = SetBit(attacks, (Square) (sq - decrement)); 
     }
     for (int file = curFl + 1, increment = 1; file <= 7; file++, increment++) { // Right
         if (GetBit(b, (Square) (sq + increment)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (sq + increment)); 
+        attacks = SetBit(attacks, (Square) (sq + increment)); 
     }
     for (int rank = curRk - 1, decrement = 1; rank >= 0; rank--, decrement++) { // Down
         if (GetBit(b, (Square) (sq - 8*decrement)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (sq - 8*decrement)); 
+        attacks = SetBit(attacks, (Square) (sq - 8*decrement)); 
     }
     for (int rank = curRk + 1, increment = 1; rank <= 7; rank++, increment++) { // Up
         if (GetBit(b, (Square) (sq + 8*increment)) != 0) break; // Blocker encountered
-        attacks = SetBit(attacks, 1, (Square) (sq + 8*increment)); 
+        attacks = SetBit(attacks, (Square) (sq + 8*increment)); 
     }
 
     return attacks;
@@ -655,12 +655,12 @@ U64 GetBlockedRookAttacks(U64 b, Square sq) {
 
 U64 Find_Relevant_Squares(U32 index, U64 rev_attacks) {
     U64 rev_squares = 0ULL;
-    U8 NumBits = CountBits(rev_attacks, 1); // Number of relevant attacks
+    U8 NumBits = CountBits(rev_attacks); // Number of relevant attacks
 
     for (U8 i = 0; i < NumBits; i++) {
-        Square sq = Get_LSMB(rev_attacks, 1);
-        rev_attacks = PopBit(rev_attacks, 1, sq);
-        if ((index & (1 << i)) != 0) rev_squares = SetBit(rev_squares, 1, sq);
+        Square sq = Get_LSMB(rev_attacks);
+        rev_attacks = PopBit(rev_attacks, sq);
+        if ((index & (1 << i)) != 0) rev_squares = SetBit(rev_squares, sq);
     }
 
     return rev_squares;
@@ -744,21 +744,21 @@ U8 Init_Sliders_Rays(void) {
         int r, f;
 
         for (r = rank - 1, f = file; r >= 0; r--)
-            Sliders_Rays[square][NORTH] = SetBit(Sliders_Rays[square][NORTH], 1, r*8 + f);
+            Sliders_Rays[square][NORTH] = SetBit(Sliders_Rays[square][NORTH], r*8 + f);
         for (r = rank - 1, f = file + 1; r >= 0 && f <= 7; r--, f++)
-            Sliders_Rays[square][NE] = SetBit(Sliders_Rays[square][NE], 1, r*8 + f);
+            Sliders_Rays[square][NE] = SetBit(Sliders_Rays[square][NE], r*8 + f);
         for (r = rank, f = file + 1; f <= 7; f++)
-            Sliders_Rays[square][EAST] = SetBit(Sliders_Rays[square][EAST], 1, r*8 + f);
+            Sliders_Rays[square][EAST] = SetBit(Sliders_Rays[square][EAST], r*8 + f);
         for (r = rank + 1, f = file + 1; r <= 7 && f <= 7; r++, f++)
-            Sliders_Rays[square][SE] = SetBit(Sliders_Rays[square][SE], 1, r*8 + f);
+            Sliders_Rays[square][SE] = SetBit(Sliders_Rays[square][SE], r*8 + f);
         for (r = rank + 1, f = file; r <= 7; r++)
-            Sliders_Rays[square][SOUTH] = SetBit(Sliders_Rays[square][SOUTH], 1, r*8 + f);
+            Sliders_Rays[square][SOUTH] = SetBit(Sliders_Rays[square][SOUTH], r*8 + f);
         for (r = rank + 1, f = file - 1; r <= 7 && f >= 0; r++, f--)
-            Sliders_Rays[square][SW] = SetBit(Sliders_Rays[square][SW], 1, r*8 + f);
+            Sliders_Rays[square][SW] = SetBit(Sliders_Rays[square][SW], r*8 + f);
         for (r = rank, f = file - 1; f >= 0; f--)
-            Sliders_Rays[square][WEST] = SetBit(Sliders_Rays[square][WEST], 1, r*8 + f);
+            Sliders_Rays[square][WEST] = SetBit(Sliders_Rays[square][WEST], r*8 + f);
         for (r = rank - 1, f = file - 1; r >= 0 && f >= 0; r--, f--)
-            Sliders_Rays[square][NW] = SetBit(Sliders_Rays[square][NW], 1, r*8 + f);
+            Sliders_Rays[square][NW] = SetBit(Sliders_Rays[square][NW], r*8 + f);
     }
 
     return 1;
@@ -782,21 +782,21 @@ void Print_Knight_Attacks(char *fname) {
 
         int newRank, newFile;
         if ((newRank = rank - 1) >= 1 && (newFile = file - 2) >= 1) // Short North Long West
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank - 2) >= 1 && (newFile = file - 1) >= 1) // Long North Short West
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank - 2) >= 1 && (newFile = file + 1) <= 8) // Long North Short East
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank - 1) >= 1 && (newFile = file + 2) <= 8) // Short North Long East
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank + 1) <= 8 && (newFile = file + 2) <= 8) // Short South Long East
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank + 2) <= 8 && (newFile = file + 1) <= 8) // Long South Short East
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank + 2) <= 8 && (newFile = file - 1) >= 1) // Long South Short West
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         if ((newRank = rank + 1) <= 8 && (newFile = file - 2) >= 1) // Short South Long West
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         
         fprintf(f, "0x%lxULL,\n", attacks);
     }
@@ -818,22 +818,22 @@ void Print_King_Attacks(char *fname) {
 
         int newFile, newRank;
         
-        if ((newRank = rank - 1) >= 1 && (newFile = file - 1) >= 1) // NW
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
-        if ((newRank = rank - 1) >= 1) // N
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (file - 1));
-        if ((newRank = rank - 1) >= 1 && (newFile = file + 1) <= 8) // NE
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
-        if ((newFile = file + 1) <= 8) // E
-            attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
-        if ((newRank = rank + 1) <= 8 && (newFile = file + 1) <= 8) // SE
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile) - 1);
-        if ((newRank = rank + 1) <= 8) // S
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (file - 1));
-        if ((newRank = rank + 1) <= 8 && (newFile = file - 1) >= 1) // SW
-            attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
-        if ((newFile = file - 1) >= 1) // W
-            attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank - 1) >= 1 && (newFile = file - 1) >= 1)       // NW
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank - 1) >= 1)                                    // N
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (file - 1));
+        if ((newRank = rank - 1) >= 1 && (newFile = file + 1) <= 8)       // NE
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
+        if ((newFile = file + 1) <= 8)                                    // E
+            attacks = SetBit(attacks, (rank - 1) * 8 + (newFile - 1));
+        if ((newRank = rank + 1) <= 8 && (newFile = file + 1) <= 8)       // SE
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile) - 1);
+        if ((newRank = rank + 1) <= 8)                                    // S
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (file - 1));
+        if ((newRank = rank + 1) <= 8 && (newFile = file - 1) >= 1)       // SW
+            attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
+        if ((newFile = file - 1) >= 1)                                    // W
+            attacks = SetBit(attacks, (rank - 1) * 8 + (newFile - 1));
 
         fprintf(f, "0x%lxULL,\n", attacks);
     }
@@ -866,16 +866,16 @@ void Print_Pawn_Attacks(char *fname) {
         int newRank, newFile;
         if ((newRank = rank - 1) >= 1) {
             if ((newFile = file - 1) >= 1)
-                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
             if ((newFile = file + 1) <= 8)
-                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         }
 
         if (rank == 5) { // EnPassen attacks
             if ((newFile = file - 1) >= 1)
-                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (rank - 1) * 8 + (newFile - 1));
             if ((newFile = file + 1) <= 8)
-                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (rank - 1) * 8 + (newFile - 1));
         }
 
         fprintf(f, "0x%lxULL,\n", attacks);
@@ -898,16 +898,16 @@ void Print_Pawn_Attacks(char *fname) {
         int newRank, newFile;
         if ((newRank = rank + 1) <= 8) {
             if ((newFile = file - 1) >= 1)
-                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
             if ((newFile = file + 1) <= 8)
-                attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (newRank - 1) * 8 + (newFile - 1));
         }
 
         if (rank == 4) { // EnPassen attacks
             if ((newFile = file - 1) >= 1)
-                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (rank - 1) * 8 + (newFile - 1));
             if ((newFile = file + 1) <= 8)
-                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+                attacks = SetBit(attacks, (rank - 1) * 8 + (newFile - 1));
         }
 
         fprintf(f, "0x%lxULL,\n", attacks);

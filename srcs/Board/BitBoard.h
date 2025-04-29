@@ -10,7 +10,6 @@
 #ifndef _BITBOARD_H_
 #define _BITBOARD_H_
 
-#include <stdarg.h>
 #include <stdio.h>
 
 #define REVERSE_ONE 0x8000000000000000ULL

@@ -30,55 +30,55 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
         Square square = (Square) (rank*8 + file);
         
         if (piece >= 'a' && piece <= 'z') // This is a black piece
-            bb->pos_bAll = SetBit(bb->pos_bAll, 1, square);
+            bb->pos_bAll = SetBit(bb->pos_bAll, square);
         else                              // This is a white piece
-            bb->pos_wAll = SetBit(bb->pos_wAll, 1, square);
+            bb->pos_wAll = SetBit(bb->pos_wAll, square);
 
         if (piece == 'p') {
             bb->num_bPawns++;
-            bb->pos_bPawns = SetBit(bb->pos_bPawns, 1, square);
+            bb->pos_bPawns = SetBit(bb->pos_bPawns, square);
         }
         else if (piece == 'r') {
             bb->num_bRooks++;
-            bb->pos_bRooks = SetBit(bb->pos_bRooks, 1, square);
+            bb->pos_bRooks = SetBit(bb->pos_bRooks, square);
         }
         else if (piece == 'n') {
             bb->num_bKnights++;
-            bb->pos_bKnights = SetBit(bb->pos_bKnights, 1, square);
+            bb->pos_bKnights = SetBit(bb->pos_bKnights, square);
         }
         else if (piece == 'b') {
             bb->num_bBishops++;
-            bb->pos_bBishops = SetBit(bb->pos_bBishops, 1, square);
+            bb->pos_bBishops = SetBit(bb->pos_bBishops, square);
         }
         else if (piece == 'q') {
             bb->num_bQueens++;
-            bb->pos_bQueens = SetBit(bb->pos_bQueens, 1, square);
+            bb->pos_bQueens = SetBit(bb->pos_bQueens, square);
         }
         else if (piece == 'k') {
-            bb->pos_bKing = SetBit(bb->pos_bKing, 1, square);
+            bb->pos_bKing = SetBit(bb->pos_bKing, square);
         }
         else if (piece == 'P') {
             bb->num_wPawns++;
-            bb->pos_wPawns = SetBit(bb->pos_wPawns, 1, square);
+            bb->pos_wPawns = SetBit(bb->pos_wPawns, square);
         }
         else if (piece == 'R') {
             bb->num_wRooks++;
-            bb->pos_wRooks = SetBit(bb->pos_wRooks, 1, square);
+            bb->pos_wRooks = SetBit(bb->pos_wRooks, square);
         }
         else if (piece == 'N') {
             bb->num_wKnights++;
-            bb->pos_wKnights = SetBit(bb->pos_wKnights, 1, square);
+            bb->pos_wKnights = SetBit(bb->pos_wKnights, square);
         }
         else if (piece == 'B') {
             bb->num_wBishops++;
-            bb->pos_wBishops = SetBit(bb->pos_wBishops, 1, square);
+            bb->pos_wBishops = SetBit(bb->pos_wBishops, square);
         }
         else if (piece == 'Q') {
             bb->num_wQueens++;
-            bb->pos_wQueens = SetBit(bb->pos_wQueens, 1, square);
+            bb->pos_wQueens = SetBit(bb->pos_wQueens, square);
         }
         else if (piece == 'K') {
-            bb->pos_wKing = SetBit(bb->pos_wKing, 1, square);
+            bb->pos_wKing = SetBit(bb->pos_wKing, square);
         }
         else {
             fprintf(stderr, "\'%c\' (ASCII: %d) is not a valid piece\n", piece, piece);
@@ -159,7 +159,7 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
         }
 
         Square square = (Square) (rank*8 + file);
-        bb->EnPassen = SetBit(bb->EnPassen, 1, square);
+        bb->EnPassen = SetBit(bb->EnPassen, square);
     }
 
     char *HalfMoveClk = strtok(NULL, " ");
