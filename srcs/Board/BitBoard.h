@@ -117,8 +117,17 @@ typedef struct BitBoard {
     U64 atk_wAll;
     U64 atk_bAll;
 
-    /* All pawn moves map on each square of the chess board */
-    U64 pawn_moves_on_each_square[64];
+    /* Covered squares of white and black.
+     * Here, a "covered" squares means a squares that can be attacked by the allied piece, even if that square is occupied by another piece.
+     * => This is used to checked if it is valid for the King to attack a square
+     */
+    U64 wCovered;
+    U64 bCovered;
+
+    /* All pawn & King moves map on each square of the chess board.
+     * Here, a "move" is defined as a movement that cannot capture any piece, such as a pawn move or a King castling
+     */
+    U64 moves_on_each_square[64];
 
     /* All possible X-Ray attacks */
     U64 atk_wXray;

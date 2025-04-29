@@ -17,6 +17,13 @@ int main(void) {
     Debug();
     //printf("%ld\n", sizeof(BitBoard));
 
+    // for (int i = 0; i < 64; i++) {
+    //     PrintBoard(BLACK_PAWN_ATTACKS[i], stdout);
+    //     getchar();
+    // }
+
+    //Print_Pawn_Attacks("resources/Pawn_Attacks.txt");
+
     //Debug_GUI();
 
     return 0;

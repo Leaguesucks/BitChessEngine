@@ -92,52 +92,54 @@ void Print_BitBoard(const BitBoard bb, Square fs, FILE *f) {
             if (fs == NOT_A_SQUARE)
                 focus = 0;
             else
-                if (GetBit(bb.atk_on_each_square[fs], square) || GetBit(bb.pawn_moves_on_each_square[fs], square))
+                if (GetBit(bb.atk_on_each_square[fs], square) || GetBit(bb.moves_on_each_square[fs], square))
                     focus = 1;
+                else if (square == fs)
+                    focus = 2;
                 else
                     focus = 0;
 
             if (GetBit(bb.pos_bPawns, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"P "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"P "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"P "COLOR(RESET)) :
                                   fprintf(f, COLOR(GREEN)"P "COLOR(RESET));
             else if (GetBit(bb.pos_bRooks, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"R "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"R "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"R "COLOR(RESET)) :
                                   fprintf(f, COLOR(GREEN)"R "COLOR(RESET));
             else if (GetBit(bb.pos_bKnights, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"N "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"N "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"N "COLOR(RESET)) :
                                   fprintf(f, COLOR(GREEN)"N "COLOR(RESET));
             else if (GetBit(bb.pos_bBishops, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"B "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"B "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"B "COLOR(RESET)) :
                                   fprintf(f, COLOR(GREEN)"B "COLOR(RESET));
             else if (GetBit(bb.pos_bQueens, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"Q "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"Q "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"Q "COLOR(RESET)) :
                                   fprintf(f, COLOR(GREEN)"Q "COLOR(RESET));
             else if (GetBit(bb.pos_bKing, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"K "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"K "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"K "COLOR(RESET)) :
                                   fprintf(f, COLOR(GREEN)"K "COLOR(RESET));
             else if (GetBit(bb.pos_wPawns, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"P "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"P "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"P "COLOR(RESET)) :
                                   fprintf(f, COLOR(CYAN)"P "COLOR(RESET));
             else if (GetBit(bb.pos_wRooks, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"R "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"R "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"R "COLOR(RESET)) :
                                   fprintf(f, COLOR(CYAN)"R "COLOR(RESET));
             else if (GetBit(bb.pos_wKnights, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"N "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"N "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"N "COLOR(RESET)) :
                                   fprintf(f, COLOR(CYAN)"N "COLOR(RESET));
             else if (GetBit(bb.pos_wBishops, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"B "COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"B "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"B "COLOR(RESET)) :
                                   fprintf(f, COLOR(CYAN)"B "COLOR(RESET));
             else if (GetBit(bb.pos_wQueens, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"Q"COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"Q "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"Q "COLOR(RESET)) :
                                   fprintf(f, COLOR(CYAN)"Q "COLOR(RESET));
             else if (GetBit(bb.pos_wKing, square))
-                (focus) ?  fprintf(f, COLOR(YELLOW)"K"COLOR(RESET)) :
+                (focus) ?  (focus == 1) ? fprintf(f, COLOR(YELLOW)"K "COLOR(RESET)) : fprintf(f, COLOR(MAGENTA)"K "COLOR(RESET)) :
                                   fprintf(f, COLOR(CYAN)"K "COLOR(RESET));
             else {
                 if (fs == NOT_A_SQUARE)
                     fprintf(f, "0 ");
                 else {
-                    if (GetBit(bb.atk_on_each_square[fs], square) || GetBit(bb.pawn_moves_on_each_square[fs], square))
+                    if (GetBit(bb.atk_on_each_square[fs], square) || GetBit(bb.moves_on_each_square[fs], square))
                         fprintf(f, COLOR(YELLOW)"1 "COLOR(RESET));
                     else
                         fprintf(f, "0 ");
@@ -160,13 +162,13 @@ void Print_BitBoard(const BitBoard bb, Square fs, FILE *f) {
     fprintf(f, "Castling Rights: ");
 
     if (bb.castle_right & 1)
-        fprintf(f, COLOR(GREEN)"K "COLOR(RESET));
+        fprintf(f, COLOR(CYAN)"K "COLOR(RESET));
     if (bb.castle_right & 2)
-        fprintf(f, COLOR(GREEN)"Q "COLOR(RESET));
+        fprintf(f, COLOR(CYAN)"Q "COLOR(RESET));
     if (bb.castle_right & 4)
-        fprintf(f, COLOR(CYAN)"k "COLOR(RESET));
+        fprintf(f, COLOR(GREEN)"k "COLOR(RESET));
     if (bb.castle_right & 8)
-        fprintf(f, COLOR(CYAN)"q "COLOR(RESET));
+        fprintf(f, COLOR(GREEN)"q "COLOR(RESET));
 
     fprintf(f, "\nEnPassen Map:\n\n");
     PrintBoard(bb.EnPassen, f);
@@ -241,8 +243,9 @@ void Debug() {
             }
 
             /* *** ENTER WHAT YOU WANNA TEST HERE *** */
-            Gen_All_Attacks(&bb, W);
-            Gen_All_Attacks(&bb, B);
+            Gen_All_Moves_Attacks(&bb);
+            bb.side2play *= -1;
+            Gen_All_Moves_Attacks(&bb);
 
 
             /* ************************************* */

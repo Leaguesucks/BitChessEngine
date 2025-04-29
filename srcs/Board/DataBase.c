@@ -471,14 +471,14 @@ const U64 WHITE_PAWN_ATTACKS[64] =
     0xa0000000000ULL,
     0x50000000000ULL,
     0x20000000000ULL,
-    0x4000000000ULL,
-    0xa000000000ULL,
-    0x5000000000ULL,
-    0x2800000000ULL,
-    0x1400000000ULL,
-    0xa00000000ULL,
-    0x500000000ULL,
-    0x200000000ULL,
+    0x4040000000ULL,
+    0xa0a0000000ULL,
+    0x5050000000ULL,
+    0x2828000000ULL,
+    0x1414000000ULL,
+    0xa0a000000ULL,
+    0x505000000ULL,
+    0x202000000ULL,
     0x40000000ULL,
     0xa0000000ULL,
     0x50000000ULL,
@@ -531,14 +531,14 @@ const U64 BLACK_PAWN_ATTACKS[64] =
     0xa00000000ULL,
     0x500000000ULL,
     0x200000000ULL,
-    0x40000000ULL,
-    0xa0000000ULL,
-    0x50000000ULL,
-    0x28000000ULL,
-    0x14000000ULL,
-    0xa000000ULL,
-    0x5000000ULL,
-    0x2000000ULL,
+    0x4040000000ULL,
+    0xa0a0000000ULL,
+    0x5050000000ULL,
+    0x2828000000ULL,
+    0x1414000000ULL,
+    0xa0a000000ULL,
+    0x505000000ULL,
+    0x202000000ULL,
     0x400000ULL,
     0xa00000ULL,
     0x500000ULL,
@@ -871,6 +871,13 @@ void Print_Pawn_Attacks(char *fname) {
                 attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
         }
 
+        if (rank == 5) { // EnPassen attacks
+            if ((newFile = file - 1) >= 1)
+                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+            if ((newFile = file + 1) <= 8)
+                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+        }
+
         fprintf(f, "0x%lxULL,\n", attacks);
     }
 
@@ -896,6 +903,12 @@ void Print_Pawn_Attacks(char *fname) {
                 attacks = SetBit(attacks, 1, (newRank - 1) * 8 + (newFile - 1));
         }
 
+        if (rank == 4) { // EnPassen attacks
+            if ((newFile = file - 1) >= 1)
+                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+            if ((newFile = file + 1) <= 8)
+                attacks = SetBit(attacks, 1, (rank - 1) * 8 + (newFile - 1));
+        }
 
         fprintf(f, "0x%lxULL,\n", attacks);
     }
