@@ -5,7 +5,7 @@ GPATH = srcs/GUI
 TPATH = Test
 OPATH = bin
 RPATH = resources
-LDFLAGS = -lm $(shell sdl2-config --libs)
+LDFLAGS = -lm $(shell sdl2-config --libs) -lSDL2_image
 
 # List of object files
 OBJS = $(OPATH)/BitManipulation.o $(OPATH)/DataBase.o $(OPATH)/MoveGen.o $(OPATH)/ChessGame.o

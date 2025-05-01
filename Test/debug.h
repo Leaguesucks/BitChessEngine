@@ -273,8 +273,11 @@ void Debug() {
 /* Debug the GUI */
 void Debug_GUI() {
     Game game;
+    BitBoard board;
 
-    sdl_init(&game);
+    Init_Game(&board, "r1b1qrk1/p1p3pp/1p3n2/2bp4/1nP5/3BPN2/PP1NQPPP/R1B2RK1 w - - 1 12");
+
+    sdl_init(&game, &board);
     sdl_chessGame(&game);
 }
 

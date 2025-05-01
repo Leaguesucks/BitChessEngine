@@ -14,7 +14,7 @@ int main(void) {
     // }
 
     //FEN_Debug(stdout);
-    Debug();
+    //Debug();
     //printf("%ld\n", sizeof(BitBoard));
 
     // for (int i = 0; i < 64; i++) {
@@ -24,7 +24,7 @@ int main(void) {
 
     //Print_Pawn_Attacks("resources/Pawn_Attacks.txt");
 
-    //Debug_GUI();
+    Debug_GUI();
 
     return 0;
 }

@@ -128,10 +128,6 @@ typedef struct BitBoard {
      */
     U64 moves_on_each_square[64];
 
-    /* All possible X-Ray attacks */
-    U64 atk_wXray;
-    U64 atk_bXray;
-
     /* Pawn EnPassen for both side */
     U64 EnPassen;
 
