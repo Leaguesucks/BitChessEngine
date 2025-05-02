@@ -278,6 +278,10 @@ void Debug_GUI() {
     Init_Game(&board, "r1b1qrk1/p1p3pp/1p3n2/2bp4/1nP5/3BPN2/PP1NQPPP/R1B2RK1 w - - 1 12");
 
     sdl_init(&game, &board);
+    Gen_All_Moves_Attacks(&board);
+    board.side2play *= -1;
+    Gen_All_Moves_Attacks(&board);
+    //for (int i = 0; i < 64; i++) PrintBoard(board.atk_on_each_square[i], stdout);
     sdl_chessGame(&game);
 }
 
