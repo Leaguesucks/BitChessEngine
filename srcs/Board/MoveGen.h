@@ -12,11 +12,11 @@
  *
  * Para: pos      -> Current position of this slider piece
  *       blockers -> A blockers map for this piece, including its ally and enemy
- *       slider   -> Indetify the sliders of interest (rook, bishop, queen). Here the absolute value of each piece is used to identify them
+ *       slider   -> Indetify the sliders of interest (rook, bishop, queen).
  * 
  * Return: The first blockers map for the slider piece
  */
-U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const float slider);
+U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const PNum slider);
 
 /* Generate attacks for the rooks
  * 
@@ -65,7 +65,7 @@ U64 Gen_Knight_Attacks(const Square pos, const U64 ally, U64 *covered);
  * 
  * Return: An attacks map for the interested pawn
  */
-U64 Gen_Pawn_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 enpassen, const float side, U64 *covered);
+U64 Gen_Pawn_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 enpassen, const U8 side, U64 *covered);
 
 /* Generate moves for the pawns 
  *
@@ -77,7 +77,7 @@ U64 Gen_Pawn_Attacks(const Square pos, const U64 enemy, const U64 ally, const U6
  * 
  * NOTE: For this function, there is no lookup tables. The pawn moves are calculated dynamically
  */
-U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const float side);
+U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const U8 side);
 
 /* Generate attacks for the King
  *
@@ -112,20 +112,18 @@ U64 Gen_King_Moves(const Square pos, const U64 blockers, const U64 ecovered, con
  *       ally      -> Current ally positions
  *       eKpos     -> Current position of the enemy King
  *       eblockers -> An enemy blocker map
- *       slider    -> Which slider is it (rook, bishop, queen). Here the absolute value of the piece is used to identify them
+ *       slider    -> Which slider is it (rook, bishop, queen)
  *       epins     -> Pointer to return the enemy pinned positions
  *      
  * Return: An X-Ray attack map for the slider piece 
  */
-U64 Gen_Sliders_XRay_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 eKpos, const U64 eblockers, const float slider, U64 *epins);
+U64 Gen_Sliders_XRay_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 eKpos, const U64 eblockers, const PNum slider, U64 *epins);
 
 /* Generate moves and attacks for all pieces and update them in the bitboard 
  *
  * Para: bb -> The current bitboard
  * 
  * Return: The total number of moves generated
- * 
- * REMINDER: We haven't checked if a piece is pinned yet
  */
 U16 Gen_All_Moves_Attacks(BitBoard *bb);
 

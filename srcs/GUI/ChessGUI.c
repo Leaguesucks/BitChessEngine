@@ -6,19 +6,19 @@ int sdl_init(Game *game, BitBoard *bb) {
     /* Might have to adjust the path depending on based on your current directory */
     const char *TEXTURE_PATH[NUMTEXTURE] = 
     {
-        "resources/images/pieces/whitepawn.png",
-        "resources/images/pieces/whiterook.png",
-        "resources/images/pieces/whiteknight.png",
-        "resources/images/pieces/whitebishop.png",
-        "resources/images/pieces/whitequeen.png",
-        "resources/images/pieces/whiteking.png",
-
         "resources/images/pieces/blackpawn.png",
         "resources/images/pieces/blackrook.png",
         "resources/images/pieces/blackknight.png",
         "resources/images/pieces/blackbishop.png",
         "resources/images/pieces/blackqueen.png",
         "resources/images/pieces/blackking.png",
+
+        "resources/images/pieces/whitepawn.png",
+        "resources/images/pieces/whiterook.png",
+        "resources/images/pieces/whiteknight.png",
+        "resources/images/pieces/whitebishop.png",
+        "resources/images/pieces/whitequeen.png",
+        "resources/images/pieces/whiteking.png",
 
         "resources/images/interfaces/greydot.png",
     };
@@ -39,6 +39,8 @@ int sdl_init(Game *game, BitBoard *bb) {
         fprintf(stderr, "sdl_init ERROR: Cannot initialize window or renderer \'%s\'\n", SDL_GetError());
         return -1;
     }
+
+    /* We have no need for the screen surface now, but keeping this here just in case */
 
     // game->ScreenSurface = SDL_GetWindowSurface(game->window);
 
@@ -119,62 +121,54 @@ void sdl_DrawChessBoard(Game *game) {
             SDL_Rect rect = {file * sdims, rank * sdims, sdims, sdims};
             SDL_RenderFillRect(game->renderer, &rect);
 
-            TNum texture = EMPTY;
-            if ((texture = game->PieceBoard[squareNum]) != EMPTY) { // Draw the piece
+            PNum texture = EMPTY;
+            if ((texture = game->PieceBoard[BLACK][squareNum]) != EMPTY) { // Draw the Black piece
                 SDL_Rect Trect = {game->Tcoords[squareNum][X], game->Tcoords[squareNum][Y], sdims, sdims};
                 SDL_RenderCopy(game->renderer, game->GameTexture[texture], NULL, &Trect);
+            }
+            else if ((texture = game->PieceBoard[WHITE][squareNum]) != EMPTY) { // Draw the White piece
+                SDL_Rect Trect = {game->Tcoords[squareNum][X], game->Tcoords[squareNum][Y], sdims, sdims};
+                SDL_RenderCopy(game->renderer, game->GameTexture[texture + 6], NULL, &Trect);
             }
 
             if (game->MaskBoard[squareNum]) { // Draw the mask square on top of the piece if there is one
                 SDL_Rect MRect = {game->Tcoords[squareNum][X], game->Tcoords[squareNum][Y], sdims, sdims};
-                SDL_RenderCopy(game->renderer, game->GameTexture[GDOT], NULL, &MRect);
+                SDL_RenderCopy(game->renderer, game->GameTexture[12], NULL, &MRect);
             }
         }
 
     /* Draw the dragged square last (if there is any) */
     if (game->me.dragging && game->me.clicked_square != NOT_A_SQUARE) {
-        if (game->PieceBoard[game->me.clicked_square] != EMPTY) { // Extra safeguard
+        if (game->PieceBoard[BLACK][game->me.clicked_square] != EMPTY ||
+            game->PieceBoard[WHITE][game->me.clicked_square] != EMPTY
+        ) { // Extra safeguard
             Square ClickedSquare = game->me.clicked_square;
             SDL_Rect Trect = {game->Tcoords[ClickedSquare][X],
                               game->Tcoords[ClickedSquare][Y],
                               sdims, sdims};
-            SDL_RenderCopy(game->renderer, game->GameTexture[game->PieceBoard[ClickedSquare]], NULL, &Trect);
+            SDL_RenderCopy(game->renderer, game->me.DragTexture, NULL, &Trect);
         }
     }
 }
 
 void sdl_Update_Window_Based_On_BitBoard(Game *game, Square focus) {
-    BitBoard *bb = game->bb;
+    const BitBoard *bb = game->bb;
 
     for (Square square = A8; square <= H1; square++) {
-        if (GetBit(bb->pos_wPawns, square))
-            game->PieceBoard[square] = WPAWN;
-        else if ((GetBit(bb->pos_wRooks, square)))
-            game->PieceBoard[square] = WROOK;
-        else if ((GetBit(bb->pos_wKnights, square)))
-            game->PieceBoard[square] = WKNIGHT;
-        else if ((GetBit(bb->pos_wBishops, square)))
-            game->PieceBoard[square] = WBISHOP;
-        else if ((GetBit(bb->pos_wQueens, square)))
-            game->PieceBoard[square] = WQUEEN;
-        else if ((GetBit(bb->pos_wKing, square)))
-            game->PieceBoard[square] = WKING;
-
-        else if (GetBit(bb->pos_bPawns, square))
-            game->PieceBoard[square] = BPAWN;
-        else if (GetBit(bb->pos_bRooks, square))
-            game->PieceBoard[square] = BROOK;
-        else if (GetBit(bb->pos_bKnights, square))
-            game->PieceBoard[square] = BKNIGHT;
-        else if (GetBit(bb->pos_bBishops, square))
-            game->PieceBoard[square] = BBISHOP;
-        else if (GetBit(bb->pos_bQueens, square))
-            game->PieceBoard[square] = BQUEEN;
-        else if (GetBit(bb->pos_bKing, square))
-            game->PieceBoard[square] = BKING;
-
-        else
-            game->PieceBoard[square] = EMPTY;
+        for (PNum p = PAWN; p <= KING; p++) {
+            if (GetBit(bb->positions[BLACK][p], square)) {
+                game->PieceBoard[BLACK][square] = p;
+                game->PieceBoard[WHITE][square] = EMPTY;
+                break;
+            }
+            else if (GetBit(bb->positions[WHITE][p], square)) {
+                game->PieceBoard[WHITE][square] = p;
+                game->PieceBoard[BLACK][square] = EMPTY;
+                break;
+            }
+            else
+                game->PieceBoard[BLACK][square] = game->PieceBoard[WHITE][square] = EMPTY;
+        }
 
         if (focus != NOT_A_SQUARE && (GetBit(bb->atk_on_each_square[focus], square) || GetBit(bb->moves_on_each_square[focus], square)))
             game->MaskBoard[square] = 1;
@@ -200,6 +194,8 @@ void sdl_Handle_MouseEvent(Game *game, SDL_MouseButtonEvent *e) {
     square = rank * 8 + file;
 
     if (e->button == SDL_BUTTON_LEFT && e->type == SDL_MOUSEBUTTONDOWN) {
+        
+        /* The offsets are used for smoothering out the dragging animation */
         offset_x = x - (file * sdims);
         offset_y = y - (rank * sdims);
 
@@ -207,11 +203,11 @@ void sdl_Handle_MouseEvent(Game *game, SDL_MouseButtonEvent *e) {
             sdl_Focus_Square(game, (Square) square, offset_x, offset_y);
         }
         else{
-            if (game->me.clicked_square == (Square) square) {// The same square is being clicked again
+            if (game->me.clicked_square == (Square) square) { // The same square is being clicked again
                 game->me.clicked++;
                 game->me.dragging = 1;
             }
-            else {// Need to find a new square
+            else { // Need to find a new square
                 sdl_Clear_Focus(game);
                 sdl_Focus_Square(game, (Square) square, offset_x, offset_y);
             }
@@ -243,11 +239,12 @@ void sdl_Handle_MouseEvent(Game *game, SDL_MouseButtonEvent *e) {
 }
 
 void sdl_Clear_Focus(Game *game) {
-    game->me.dragging = 0;
-    game->me.clicked = 0;
-    game->me.clicked_square = NOT_A_SQUARE;
-    game->me.offsets[X] = game->me.offsets[Y] = 0;
+    game->me.dragging         = 0;
+    game->me.clicked          = 0;
+    game->me.clicked_square   = NOT_A_SQUARE;
+    game->me.offsets[X]       = game->me.offsets[Y] = 0;
     game->me.return_coords[X] = game->me.return_coords[Y] = 0;
+    game->me.DragTexture      = NULL;
     sdl_Update_Window_Based_On_BitBoard(game, NOT_A_SQUARE);
 }
 
@@ -256,15 +253,25 @@ void sdl_Focus_Square(Game *game, Square square, int offsetX, int offsetY) {
         sdl_Clear_Focus(game);
         return (void) 0;
     }
-    if (game->PieceBoard[square] == EMPTY || game->PieceBoard[square] == GDOT) { // There is no pieces on that square
-        sdl_Clear_Focus(game);
-        return (void) 0;
-    }
     
     /* Else a piece has been successfully clicked on */
     /* Implement if we are supposed to be clicking on that piece later on */
     
+    PNum p;
+    SDL_Texture *TexturePP;
+
+
+    if ((p = game->PieceBoard[BLACK][square]) != EMPTY)
+        TexturePP = game->GameTexture[p];
+    else if ((p = game->PieceBoard[WHITE][square]) != EMPTY)
+        TexturePP = game->GameTexture[p + 6];
+    else { // This square is an empty square
+        sdl_Clear_Focus(game);
+        return (void) 0;
+    }
+
     game->me.clicked_square = (Square) square;
+    game->me.DragTexture = TexturePP;
     game->me.return_coords[X] = game->Tcoords[square][X];
     game->me.return_coords[Y] = game->Tcoords[square][Y];
     game->me.offsets[X] = offsetX;

@@ -26,35 +26,18 @@
 #define WHITE_CASTLE_QUEEN_SEQUENCES 0x00000000000000f8ULL
 #define WHITE_CASTLE_KING_SEQUENCES  0x000000000000000fULL
 
+#define CASTLE_KING   0
+#define CASTLE_QUEEN  1
 
+#define WKING_CASTLE_SQUARE  G1
+#define WQUEEN_CASTLE_SQUARE C1
+#define BKING_CASTLE_SQUARE  G8
+#define BQUEEN_CASTLE_SQUARE C8
 
-/* Chess pieces absolute values as evaluated by AlphaZero in 2020 */
+#define MAX50COUNT 100;
 
-/* Pawn absolute value */
-#define PAWN_ABS_VAL 1.0f
-
-/* Rook absolute value */
-#define ROOK_ABS_VAL 5.63f
-
-/* Knight absolute value */
-#define KNIGHT_ABS_VAL 3.05f
-
-/* Bishop absolute value */
-#define BISHOP_ABS_VAL 3.33f
-
-/* Queen absolute value */
-#define QUEEN_ABS_VAL 9.5f
-
-/* King absolute value */
-#define KING_ABS_VAL 1e6f
-
-#define CASTLE_RIGHT 1;
-#define CASTLE_LEFT -1;
-
-/* ***************************** */
-
-static const float B = (-1.0f); // Black side
-static const float W = (1.0f);  // White side
+#define BLACK 0
+#define WHITE 1
 
 typedef unsigned char   U8;
 typedef unsigned short U16;
@@ -77,51 +60,34 @@ typedef enum Direction {
     NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW
 } Direction;
 
+/* Chess pieces square identification */
+typedef enum PNum {
+    PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING, 
+    EMPTY
+} PNum;
+
 typedef struct BitBoard {
     
-    /* Postions of all pieces of each type */
-    U64 pos_wPawns;
-    U64 pos_wRooks;
-    U64 pos_wKnights;
-    U64 pos_wBishops;
-    U64 pos_wQueens;
-    U64 pos_wKing;
-    U64 pos_wAll;
+    /* Postions of all pieces of each type. 0 for Black, 1 for White */
+    U64 positions[2][6];
 
-    U64 pos_bPawns;
-    U64 pos_bRooks;
-    U64 pos_bKnights;
-    U64 pos_bBishops;
-    U64 pos_bQueens;
-    U64 pos_bKing;
-    U64 pos_bAll;
+    /* All positions of all pieces on each side. 0 for Black, 1 for White */
+    U64 all_positions[2];
 
-    /* Cuurent number of each pieces on the chess board */
-    U8 num_wPawns;
-    U8 num_wRooks;
-    U8 num_wKnights;
-    U8 num_wBishops;
-    U8 num_wQueens;
-
-    U8 num_bPawns;
-    U8 num_bRooks;
-    U8 num_bKnights;
-    U8 num_bBishops;
-    U8 num_bQueens;
+    /* Cuurent number of each pieces on the chess board. 0 - 5 for White, 6 - 11 for Black */
+    U8 numPiece[2][6];
 
     /* Attack map on each square of the chess board */
     U64 atk_on_each_square[64];
 
-    /* Attack map of white and black pieces */
-    U64 atk_wAll;
-    U64 atk_bAll;
+    /* Attack map of white and black pieces. 0 for Black, 1 for White */
+    U64 all_attacks[2];
 
-    /* Covered squares of white and black.
+    /* Covered squares of white and black. 0 for Black, 1 for White
      * Here, a "covered" squares means a squares that can be attacked by the allied piece, even if that square is occupied by another piece.
      * => This is used to checked if it is valid for the King to attack a square
      */
-    U64 wCovered;
-    U64 bCovered;
+    U64 covered[2];
 
     /* All pawn & King moves map on each square of the chess board.
      * Here, a "move" is defined as a movement that cannot capture any piece, such as a pawn move or a King castling
@@ -137,12 +103,17 @@ typedef struct BitBoard {
      */
     U8 castle_right;
 
-    /* The pin positions of each side. If a piece is pin then it cannot move */
-    U64 wPins;
-    U64 bPins;
+    /* If right now the King can castle then the corresponding square will be set to the position of the King after castling 
+     * -> 0 index for Black, 1 for White
+     * -> 0 sub-index for King castle, 1 for Queen Castle
+     */
+    Square castle_square[2][2];
 
-    /* Who to move. -1 for black and 1 for white */
-    float side2play;
+    /* The pin positions of each side. If a piece is pin then it cannot move. 0 for Black, 1 for White */
+    U64 pins[2];
+
+    /* Who to move. 0 for black and 1 for white */
+    U8 side2play;
 
     /* 50 moves rules counter. The game is a draw if it is 0. Reset back to 100 if there is a pawn
      * advance or capturing from both sides. Decrement starts from the next moves after the most

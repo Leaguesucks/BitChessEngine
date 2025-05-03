@@ -22,10 +22,6 @@
 #include "BitManipulation.h"
 #include "DataBase.h"
 
-typedef enum magic_piece {
-   ROOK, BISHOP
-} magic_piece;
-
 /* Generate a random U64 number
  *
  * Return: A random U64 number
@@ -45,7 +41,7 @@ U64 random_U64_with_more_1sBit(void);
  *
  * Return: The magic number if successful, 0 otherwise
  */
-U64 Find_Magic_Number(Square sq, magic_piece p);
+U64 Find_Magic_Number(Square sq, PNum mp);
 
 /* Generate magic numbers for both the bishops and the rooks and print the results
  * 

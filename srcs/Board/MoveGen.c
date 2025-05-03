@@ -1,9 +1,9 @@
 #include "MoveGen.h"
 
-U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const float slider) {
+U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const PNum slider) {
     U64 firstBlockers = 0ULL;
 
-    if (slider == ROOK_ABS_VAL) {
+    if (slider == ROOK) {
         U64 N_Blockers = Sliders_Rays[pos][NORTH] & blockers;
         U64 S_Blockers = Sliders_Rays[pos][SOUTH] & blockers;
         U64 W_Blockers = Sliders_Rays[pos][WEST]  & blockers;
@@ -18,7 +18,7 @@ U64 Find_Sliders_First_Blockers(const Square pos, const U64 blockers, const floa
         if (E_Blockers)
             firstBlockers = SetBit(firstBlockers, Get_MSMB(E_Blockers));    
     }
-    else if (slider == BISHOP_ABS_VAL) {
+    else if (slider == BISHOP) {
         U64 NE_Blockers = Sliders_Rays[pos][NE] & blockers;
         U64 NW_Blockers = Sliders_Rays[pos][NW] & blockers;
         U64 SE_Blockers = Sliders_Rays[pos][SE] & blockers;
@@ -43,7 +43,7 @@ U64 Gen_Rook_Attacks(const Square pos, const U64 enemy, const U64 ally, const U6
     U64 blockers = (ally | enemy); // Create a blockers map
     U64 rev_blockers = RELEVANT_ROOK_ATTACKS[pos] & blockers; // Create a relevant blockers map
 
-    U64 firstBlockers = Find_Sliders_First_Blockers(pos, blockers, ROOK_ABS_VAL); // Find the first blockers
+    U64 firstBlockers = Find_Sliders_First_Blockers(pos, blockers, ROOK); // Find the first blockers
 
     U64 index = (rev_blockers * ROOK_MAGIC_NUMBERS[pos]) >> (64 - NUM_ROOK_RELEVANT_SQUARES[pos]);
     U64 init_attacks = Rook_Attacks[pos][index];
@@ -52,7 +52,7 @@ U64 Gen_Rook_Attacks(const Square pos, const U64 enemy, const U64 ally, const U6
     if (covered != NULL) *covered |= (init_attacks | firstBlockers );
 
     if (covered != NULL && epins != NULL) // Calculate the enemy's positions that are pinned by this rook
-        Gen_Sliders_XRay_Attacks(pos, enemy, ally, eKpos, firstBlockers & enemy, ROOK_ABS_VAL, epins);
+        Gen_Sliders_XRay_Attacks(pos, enemy, ally, eKpos, firstBlockers & enemy, ROOK, epins);
 
     /* Exclude the allies, include the enemies in the attack map */
     return (init_attacks & (~ally)) | (firstBlockers & enemy);
@@ -62,7 +62,7 @@ U64 Gen_Bishop_Attacks(const Square pos, const U64 enemy, const U64 ally, const 
     U64 blockers = (ally | enemy); // Create a blockers map
     U64 rev_blockers = RELEVANT_BISHOP_ATTACKS[pos] & blockers; // Create a relevant blockers map
 
-    U64 firstBlockers  = Find_Sliders_First_Blockers(pos, blockers, BISHOP_ABS_VAL); // Find the first blockers
+    U64 firstBlockers  = Find_Sliders_First_Blockers(pos, blockers, BISHOP); // Find the first blockers
 
     U64 index = (rev_blockers * BISHOP_MAGIC_NUMBERS[pos]) >> (64 - NUM_BISHOP_RELEVANT_SQUARES[pos]);
     U64 init_attacks = Bishop_Attacks[pos][index];
@@ -71,7 +71,7 @@ U64 Gen_Bishop_Attacks(const Square pos, const U64 enemy, const U64 ally, const 
     if (covered != NULL) *covered |= (init_attacks | firstBlockers);
 
     if (covered != NULL && epins != NULL) // Calculate the enemy's positions that are pinned by this bishop
-        Gen_Sliders_XRay_Attacks(pos, enemy, ally, eKpos, firstBlockers & enemy, BISHOP_ABS_VAL, epins);
+        Gen_Sliders_XRay_Attacks(pos, enemy, ally, eKpos, firstBlockers & enemy, BISHOP, epins);
 
     /* Exclude the allies, include the enemies in the attack map */
     return (init_attacks & (~ally)) | (firstBlockers & enemy);
@@ -85,22 +85,22 @@ U64 Gen_Knight_Attacks(const Square pos, const U64 ally, U64 *covered) {
     return (init_attacks & (~ally));
 }
 
-U64 Gen_Pawn_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 enpassen, const float side, U64 *covered) {
-    const U64 *attacks_table = (side == W) ? WHITE_PAWN_ATTACKS : BLACK_PAWN_ATTACKS;
+U64 Gen_Pawn_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 enpassen, const U8 side, U64 *covered) {
+    const U64 *attacks_table = (side == WHITE) ? WHITE_PAWN_ATTACKS : BLACK_PAWN_ATTACKS;
     U64 init_attacks = attacks_table[pos]; // The attack tables has EnPassen attacks as well
 
     /* The pawns cannot EnPassen any other pieces that is not a pawn. Therefore, we would not say an EnPassen square is "covered" by the pawn */
-    U64 enPassen_Rank = (side == W) ? 0x00000000ff000000ULL : 0x000000ff00000000ULL;
+    U64 enPassen_Rank = (side == WHITE) ? 0x00000000ff000000ULL : 0x000000ff00000000ULL;
     /* Exclude the EnPassen attacks in a Pawn covered squares */
     *covered |= (init_attacks & (~enPassen_Rank));
 
     init_attacks &= ~ally; // Remove the allies from the attack map
 
     /* Include the enemies and the Enpassen enemies in the attack map */
-    return init_attacks & (enemy | enpassen);
+    return init_attacks & enpassen & enemy;
 }
 
-U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const float side) {
+U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const U8 side) {
     U64 moves = 0ULL;
     int num_moves = 0;
     int rank, file, newRank;
@@ -108,7 +108,7 @@ U64 Gen_Pawn_Moves(const Square pos, const U64 blockers, const float side) {
     rank = (int) (pos / 8); // 0-7, top -> bottom
     file = (int) (pos % 8); // 0-7, left -> right
 
-    if (side == W) {
+    if (side == WHITE) {
         num_moves = (pos >= A2 && pos <= H2) ? 2 : 1; // First rank pawns can moves 2 squares
 
         for (int i = 1; i <= num_moves; i++) 
@@ -147,7 +147,7 @@ U64 Gen_King_Moves(const Square pos, const U64 blockers, const U64 ecovered, con
     Square KMove;
     Square QMove;
 
-    if (side == W) {
+    if (side == WHITE) {
         Kcastling_sequence = WHITE_CASTLE_KING_SEQUENCES  & (~0x0101010101010101ULL);  // Remove the King edge
         Qcastling_sequence = WHITE_CASTLE_QUEEN_SEQUENCES & (~0x8080808080808080ULL);  // Remove the Queen edge
         KMove = G1;
@@ -164,17 +164,17 @@ U64 Gen_King_Moves(const Square pos, const U64 blockers, const U64 ecovered, con
     U64 local_blockers = PopBit(blockers, pos); // Remove the King's position from the blockers map
 
     if (KC)
-        if ((Kcastling_sequence & (local_blockers | ecovered)) == 0) // There is no obstacle on the King side
+        if ((Kcastling_sequence & (local_blockers | ecovered)) == 0) // There is no obstacle on the King side => Can castle King side
             moves = SetBit(moves, KMove);
     
     if (QC)
-        if ((Qcastling_sequence & (local_blockers | ecovered)) == 0) // There is no obstacle on the Queen side
+        if ((Qcastling_sequence & (local_blockers | ecovered)) == 0) // There is no obstacle on the Queen side => Can castle Queen side
             moves = SetBit(moves, QMove);
 
     return moves;
 }
 
-U64 Gen_Sliders_XRay_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 eKpos, const U64 eblockers, const float slider, U64 *epins) {
+U64 Gen_Sliders_XRay_Attacks(const Square pos, const U64 enemy, const U64 ally, const U64 eKpos, const U64 eblockers, const PNum slider, U64 *epins) {
     U64 local_eBlockers = eblockers;
     U64 local_enemy = enemy;
     Square pos_eBlockers;  // Postion of the enemy blockers
@@ -186,7 +186,7 @@ U64 Gen_Sliders_XRay_Attacks(const Square pos, const U64 enemy, const U64 ally, 
         local_eBlockers = PopBit(local_eBlockers, pos_eBlockers);
         local_enemy = PopBit(local_enemy, pos_eBlockers); // Remove the enemy blockers from current positions
 
-        if (slider == ROOK_ABS_VAL)
+        if (slider == ROOK)
             new_attacks = Gen_Rook_Attacks(pos, local_enemy, ally, eKpos, NULL, NULL);
         else // Assume it is a bishops. We don't care if it is the Queen or Bishop or any other pieces since this function is used by sliders attacks generation functions anyway
             new_attacks = Gen_Bishop_Attacks(pos, local_enemy, ally, eKpos, NULL, NULL);
@@ -202,78 +202,40 @@ U64 Gen_Sliders_XRay_Attacks(const Square pos, const U64 enemy, const U64 ally, 
 
 U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     U64 pos_Allies, pos_Enemies;
-    U64 pos_Pawns, pos_Rooks, pos_Knights, pos_Bishops, pos_Queens, pos_King; // Allies' positions of each piece
-    U64 pos_eKing;  // Position of the enemies' King
-    U64 eCovered;   // Enemies covered positions
-    U64 aPinned;    // Allies pinned positions
-    U64 *aCovered;  // A pointer to the allies' covered map
-    U64 *ePinned;   // A pointer to the enemies' pinned pieces
-    U64 *aAtks;     // A pointer to the allies' all attacks map
-    U8 numPawns, numRooks, numKnights, numBishops, numQueens;
-    U8 K_Castle, Q_Castle; // Castling right
+    U64 positions[6];      // Allies' positions of each piece
+    U64 pos_eKing;         // Position of the enemies' King
+    U64 eCovered;          // Enemies covered positions
+    U64 aPinned;           // Allies pinned positions
+    U64 *aCovered;         // A pointer to the allies' covered map
+    U64 *ePinned;          // A pointer to the enemies' pinned pieces
+    U64 *aAtks;            // A pointer to the allies' all attacks map
+    U8 K_Castle, Q_Castle; // Castling Rights
 
-    const float side = bb->side2play;
+    U8 side = bb->side2play;
+    U8 eside;
 
-    if (side == W) {
-        pos_Allies  = bb->pos_wAll;
-        pos_Enemies = bb->pos_bAll;
-
-        pos_Pawns   = bb->pos_wPawns;
-        pos_Rooks   = bb->pos_wRooks;
-        pos_Knights = bb->pos_wKnights;
-        pos_Bishops = bb->pos_wBishops;
-        pos_Queens  = bb->pos_wQueens;
-        pos_King    = bb->pos_wKing;
-
-        pos_eKing  =  bb->pos_bKing;
-
-        numPawns    = bb->num_wPawns;
-        numRooks    = bb->num_wRooks;
-        numKnights  = bb->num_wKnights;
-        numBishops  = bb->num_wBishops;
-        numQueens   = bb->num_wQueens;
-
+    if (side == WHITE) {
+        eside = BLACK;
         K_Castle    = bb->castle_right & 1;
         Q_Castle    = bb->castle_right & 2;
-
-        eCovered    = bb->bCovered;
-        aCovered    = &(bb->wCovered);
-
-        aPinned     = bb->wPins;
-        ePinned     = &(bb->bPins);
-
-        aAtks       = &(bb->atk_wAll);
     }
     else {
-        pos_Allies  = bb->pos_bAll;
-        pos_Enemies = bb->pos_wAll;
-
-        pos_Pawns   = bb->pos_bPawns;
-        pos_Rooks   = bb->pos_bRooks;
-        pos_Knights = bb->pos_bKnights;
-        pos_Bishops = bb->pos_bBishops;
-        pos_Queens  = bb->pos_bQueens;
-        pos_King    = bb->pos_bKing;
-
-        pos_eKing   = bb->pos_wKing;
-
-        numPawns    = bb->num_bPawns;
-        numRooks    = bb->num_bRooks;
-        numKnights  = bb->num_bKnights;
-        numBishops  = bb->num_bBishops;
-        numQueens   = bb->num_bQueens;
-
+        eside = WHITE;
         K_Castle    = bb->castle_right & 4;
         Q_Castle    = bb->castle_right & 8;
-
-        eCovered    = bb->wCovered;
-        aCovered    = &(bb->bCovered);
-
-        aPinned     = bb->bPins;
-        ePinned     = &(bb->wPins);
-
-        aAtks       = &(bb->atk_bAll);
     }
+
+    for (PNum p = PAWN; p <= KING; p++)
+        positions[p] = bb->positions[side][p];
+
+    pos_Allies  = bb->all_positions[side];
+    pos_Enemies = bb->all_positions[eside];
+    pos_eKing   = bb->positions[eside][KING];
+    eCovered    = bb->covered[eside];
+    aPinned     = bb->pins[side];
+    aCovered    = &(bb->covered[side]);
+    ePinned     = &(bb->pins[eside]);
+    aAtks       = &(bb->all_attacks[side]);
 
     U16 atk_counts = 0;
     Square pos = NOT_A_SQUARE;
@@ -281,9 +243,9 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     *aCovered = *ePinned = *aAtks = 0ULL;
 
     /* Find attacks for the Rooks */
-    for (U8 i = 0; i < numRooks; i++) {
-        pos = Get_LSMB(pos_Rooks);
-        pos_Rooks = PopBit(pos_Rooks, pos);
+    while (positions[ROOK] != 0ULL) {
+        pos = Get_LSMB(positions[ROOK]);
+        positions[ROOK] = PopBit(positions[ROOK], pos);
         if ((SetBit(0ULL, pos) & aPinned) == 0ULL) {
             bb->atk_on_each_square[pos] = Gen_Rook_Attacks(pos, pos_Enemies, pos_Allies, pos_eKing, aCovered, ePinned);
             atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
@@ -295,9 +257,9 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     }
 
     /* Find attacks for the Bishops */
-    for (U8 i = 0; i < numBishops; i++) {
-        pos = Get_LSMB(pos_Bishops);
-        pos_Bishops = PopBit(pos_Bishops, pos);
+    while (positions[BISHOP] != 0ULL) {
+        pos = Get_LSMB(positions[BISHOP]);
+        positions[BISHOP] = PopBit(positions[BISHOP], pos);
         if ((SetBit(0ULL, pos) & aPinned) == 0ULL) {
             bb->atk_on_each_square[pos] = Gen_Bishop_Attacks(pos, pos_Enemies, pos_Allies, pos_eKing, aCovered, ePinned);
             atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
@@ -309,9 +271,9 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     }
 
     /* Find attacks for the Queens */
-    for (U8 i = 0; i < numQueens; i++) {
-        pos = Get_LSMB(pos_Queens);
-        pos_Queens = PopBit(pos_Queens, pos);
+    while (positions[QUEEN] != 0ULL) {
+        pos = Get_LSMB(positions[QUEEN]);
+        positions[QUEEN] = PopBit(positions[QUEEN], pos);
         if ((SetBit(0ULL, pos) & aPinned) == 0ULL) {
             bb->atk_on_each_square[pos] = (Gen_Rook_Attacks(pos, pos_Enemies, pos_Allies, pos_eKing, aCovered, ePinned) | 
                                            Gen_Bishop_Attacks(pos, pos_Enemies, pos_Allies, pos_eKing, aCovered, ePinned));
@@ -324,9 +286,9 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     }
 
     /* Find attacks for the Knights */
-    for (U8 i = 0; i < numKnights; i++) {
-        pos = Get_LSMB(pos_Knights);
-        pos_Knights = PopBit(pos_Knights, pos);
+    while (positions[KNIGHT] != 0ULL) {
+        pos = Get_LSMB(positions[KNIGHT]);
+        positions[KNIGHT] = PopBit(positions[KNIGHT], pos);
         if ((SetBit(0ULL, pos) & aPinned) == 0ULL) {
             bb->atk_on_each_square[pos] = Gen_Knight_Attacks(pos, pos_Allies, aCovered);
             atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);
@@ -338,9 +300,9 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     }
 
     /* Find moves and attacks for the Pawns */
-    for (U8 i = 0; i < numPawns; i++) {
-        pos = Get_LSMB(pos_Pawns);
-        pos_Pawns = PopBit(pos_Pawns, pos);
+    while (positions[PAWN] != 0ULL) {
+        pos = Get_LSMB(positions[PAWN]);
+        positions[PAWN] = PopBit(positions[PAWN], pos);
         if ((SetBit(0ULL, pos) & aPinned) == 0ULL) {
             bb->atk_on_each_square[pos]   = Gen_Pawn_Attacks(pos, pos_Enemies, pos_Allies, bb->EnPassen, side, aCovered);
             bb->moves_on_each_square[pos] = Gen_Pawn_Moves(pos, pos_Enemies | pos_Allies, side);
@@ -356,7 +318,7 @@ U16 Gen_All_Moves_Attacks(BitBoard *bb) {
     }
 
     /* Find moves and attacks for the King. Note that technically the King cannot be pinned */
-    pos = Get_LSMB(pos_King);
+    pos = Get_LSMB(positions[KING]);
     bb->atk_on_each_square[pos]   = Gen_King_Attacks(pos, pos_Allies, eCovered, aCovered);
     bb->moves_on_each_square[pos] = Gen_King_Moves(pos, pos_Enemies | pos_Allies, eCovered, K_Castle, Q_Castle, side);
     atk_counts += (U16) CountBits(bb->atk_on_each_square[pos]);

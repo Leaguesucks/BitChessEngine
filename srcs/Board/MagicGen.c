@@ -11,7 +11,7 @@ U64 random_U64_with_more_1sBit(void) {
     return random_U64() & random_U64() & random_U64();
 }
 
-U64 Find_Magic_Number(Square sq, magic_piece mp) {
+U64 Find_Magic_Number(Square sq, PNum mp) {
     U64 rev_squares[4096], attacks[4096], used_attacks[4096];
     U64 relevant_attacks;
     U32 relevant_attack_num;

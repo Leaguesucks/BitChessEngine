@@ -16,17 +16,11 @@
 #define X 0
 #define Y 1
 
-/* Chess pieces textures identification */
-typedef enum TNum {
-    WPAWN, WROOK, WKNIGHT, WBISHOP, WQUEEN, WKING,
-    BPAWN, BROOK, BKNIGHT, BBISHOP, BQUEEN, BKING,
-    GDOT , EMPTY
-} TNum;
-
 /* A struct to handle the Nouse Event */
 typedef struct MouseEvent {
     U8  dragging;                         // Equals 1 if a piece is being dragged. Otherwise 0
     U8 clicked;                           // If 0, then no piece is being clicked. If 1 a piece is being clicked and should be reset to 0 on the next click
+    SDL_Texture *DragTexture;             // The texture that is being dragged
     Square clicked_square;                // Which square that has been cliked on by. EMPTY_SQUARE if no or not a legal square is clicked on
     int return_coords[2];                 // Absolute coordinate of the locked piece to return after it is released
     int offsets[2];                       // Offset, which is used during drag to smooth out the animation
@@ -38,13 +32,12 @@ typedef struct Game {
     SDL_Window *window;                   // The game Window
     SDL_Renderer *renderer;               // The game Renderer
     //SDL_Surface *ScreenSurface;         // The surface contained by the Window
-    SDL_Texture *GameTexture[NUMTEXTURE]; // 13 diffrent surfaces, not including empty squares
-    U8 PieceBoard[64];                    // Contain informations about what piece to display on the window. Each square is counted from left -> right, top -> bottom
+    SDL_Texture *GameTexture[NUMTEXTURE]; // 13 diffrent surfaces, not including empty squares. 0 - 5 for the Black pieces, 6 - 11 for the White Pieces. The rest are for interfaces purposes
+    PNum PieceBoard[2][64];               // Contain informations about what piece to display on the window. Each square is counted from left -> right, top -> bottom
     U8 MaskBoard[64];                     // Either > 0 for the square is being masked by a grey dot or 0.
     BitBoard *bb;                         // Pointer to the Bitboard representation of the positions
     
     int dims;                             // X and Y dimension of the chess board, which is a square
-
     int Tcoords[64][2];                   // The coordinate of each texture on the chessboard. 0 -> X, 1 -> Y
 
     MouseEvent me;                        // Handle the mouse event

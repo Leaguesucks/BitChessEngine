@@ -1,7 +1,19 @@
 #include "ChessGame.h"
 
+static const char PCHAR[2][6] =
+{
+    {'p', 'r', 'n', 'b', 'q', 'k' }, // Black pieces
+    {'P', 'R', 'N', 'B', 'Q', 'K'}   // White pieces
+};
+
 U8 FEN_Decode(BitBoard *bb, const char *fen) {
     char *fenDup = malloc(1000);
+
+    if (fenDup == NULL) {
+        fprintf(stderr, "Cannot allocate dynamic memory for FEN_Decode()\n");
+        return 0;
+    }
+
     strncpy(fenDup, fen, 1000);
 
     char *position = strtok(fenDup, " "); // The first field is the position filed
@@ -29,58 +41,20 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
         
         Square square = (Square) (rank*8 + file);
         
-        if (piece >= 'a' && piece <= 'z') // This is a black piece
-            bb->pos_bAll = SetBit(bb->pos_bAll, square);
-        else                              // This is a white piece
-            bb->pos_wAll = SetBit(bb->pos_wAll, square);
+        PNum p = EMPTY;
+        for (U8 side = 0; side < 2; side++) {
+            for (PNum pNum = PAWN; pNum <= KING; pNum++)
+                if (piece == PCHAR[side][pNum]) {
+                    p = pNum;
+                    bb->positions[side][pNum] = SetBit(bb->positions[side][pNum], square);
+                    bb->numPiece[side][pNum]++;
+                    break;
+                }
+            if (p != EMPTY)
+                break;
+        }
 
-        if (piece == 'p') {
-            bb->num_bPawns++;
-            bb->pos_bPawns = SetBit(bb->pos_bPawns, square);
-        }
-        else if (piece == 'r') {
-            bb->num_bRooks++;
-            bb->pos_bRooks = SetBit(bb->pos_bRooks, square);
-        }
-        else if (piece == 'n') {
-            bb->num_bKnights++;
-            bb->pos_bKnights = SetBit(bb->pos_bKnights, square);
-        }
-        else if (piece == 'b') {
-            bb->num_bBishops++;
-            bb->pos_bBishops = SetBit(bb->pos_bBishops, square);
-        }
-        else if (piece == 'q') {
-            bb->num_bQueens++;
-            bb->pos_bQueens = SetBit(bb->pos_bQueens, square);
-        }
-        else if (piece == 'k') {
-            bb->pos_bKing = SetBit(bb->pos_bKing, square);
-        }
-        else if (piece == 'P') {
-            bb->num_wPawns++;
-            bb->pos_wPawns = SetBit(bb->pos_wPawns, square);
-        }
-        else if (piece == 'R') {
-            bb->num_wRooks++;
-            bb->pos_wRooks = SetBit(bb->pos_wRooks, square);
-        }
-        else if (piece == 'N') {
-            bb->num_wKnights++;
-            bb->pos_wKnights = SetBit(bb->pos_wKnights, square);
-        }
-        else if (piece == 'B') {
-            bb->num_wBishops++;
-            bb->pos_wBishops = SetBit(bb->pos_wBishops, square);
-        }
-        else if (piece == 'Q') {
-            bb->num_wQueens++;
-            bb->pos_wQueens = SetBit(bb->pos_wQueens, square);
-        }
-        else if (piece == 'K') {
-            bb->pos_wKing = SetBit(bb->pos_wKing, square);
-        }
-        else {
+        if (p == EMPTY) {
             fprintf(stderr, "\'%c\' (ASCII: %d) is not a valid piece\n", piece, piece);
             return 0;
         }
@@ -95,9 +69,9 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
     }
 
     if (strncmp(Side2Play, "w", 1) == 0)
-        bb->side2play = W;
+        bb->side2play = WHITE;
     else if (strncmp(Side2Play, "b", 1) == 0)
-        bb->side2play = B;
+        bb->side2play = BLACK;
     else {
         fprintf(stderr, "\'%s\' is not a valid side to play\n", Side2Play);
         return 0;
@@ -202,6 +176,12 @@ U8 FEN_Decode(BitBoard *bb, const char *fen) {
 
     bb->Full_MoveCount = (U16) full;
 
+    /* Create the all position */
+    for (PNum pNum = PAWN; pNum <= KING; pNum++) {
+        bb->all_positions[WHITE] |= bb->positions[WHITE][pNum];
+        bb->all_positions[BLACK] |= bb->positions[BLACK][pNum];
+    }
+
     free(fenDup);
 
     return 1;
@@ -219,3 +199,78 @@ U8 Init_Game(BitBoard *bb, const char *fen) {
 
     return s1 && s2;
 }
+
+// U8 MovePiece(BitBoard *bb, const TNum Bpiece, const Square prev, const Square next) {
+//     U64 *cPos;        // Pointer to current position of the piece to move
+//     U64 *aPos;        // Pointer to the "all" position of the side of the piece to move
+//     U64 cAtk;         // Current attack map of this piece
+//     U64 cMove = 0ULL; // Current movement map (if any) of this piece
+
+//     /* Pieces of opposite side are not supposed to move */
+//     if (bb->side2play == W && Bpiece > WKING || bb->side2play == B && Bpiece <= WKING)
+//         return 0;
+
+//     if (bb->side2play == W) {
+//         aPos = &(bb->pos_wAll);
+
+//         if (Bpiece == WPAWN) {
+//             cPos = &(bb->pos_wPawns);
+//             cMove = bb->moves_on_each_square[prev];
+//         }
+//         else if (Bpiece == WROOK)
+//             cPos = &(bb->pos_wRooks);
+//         else if (Bpiece == WKNIGHT)
+//             cPos = &(bb->pos_wKnights);
+//         else if (Bpiece == WBISHOP)
+//             cPos = &(bb->pos_wBishops);
+//         else if (Bpiece == WQUEEN)
+//             cPos = &(bb->pos_wQueens);
+//         else if (Bpiece == WKING) {
+//             cPos = &(bb->pos_wKing);
+//             cMove = bb->moves_on_each_square[prev];
+//         }
+//         else
+//             return 0;
+//     }
+//     else {
+//         aPos = &(bb->pos_bAll);
+
+//         if (Bpiece == BPAWN) {
+//             cPos = &(bb->pos_bPawns);
+//             cMove = bb->moves_on_each_square[prev];
+//         }
+//         else if (Bpiece == BROOK)
+//             cPos = &(bb->pos_bRooks);
+//         else if (Bpiece == BKNIGHT)
+//             cPos = &(bb->pos_bKnights);
+//         else if (Bpiece == BBISHOP)
+//             cPos = &(bb->pos_bBishops);
+//         else if (Bpiece == BQUEEN)
+//             cPos = &(bb->pos_bQueens);
+//         else if (Bpiece == BKING) {
+//             cPos = &(bb->pos_bKing);
+//             cMove = bb->moves_on_each_square[prev];
+//         }
+//         else
+//             return 0;
+//     }
+    
+//     if (!GetBit(*cPos, prev)) // The current position of this piece cannot be found
+//         return 0;
+
+//     cAtk = bb->atk_on_each_square[prev];
+
+//     if (!GetBit(cAtk, next) && !GetBit(cMove, next)) // The moved square is not legal
+//         return 0;
+
+//     /* Move the piece to a new position */
+//     *cPos = PopBit(*cPos, prev);
+//     *cPos = SetBit(*cPos, next);
+
+//     /* Update the new "all" position */
+//     *aPos = PopBit(*cPos, prev);
+//     *aPos = SetBit(*cPos, next);
+
+//     /* Swap the turn to a new side */
+//     bb->side2play *= -1;
+// }
