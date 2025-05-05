@@ -29,3 +29,7 @@ Square Get_MSMB(U64 b) {
 
     return (Square) __lzcnt64(b);
 }
+
+U64 MoveBit(U64 b, Square oldSq, Square newSq) {
+    return SetBit(PopBit(b, oldSq), newSq);
+}

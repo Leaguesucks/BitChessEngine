@@ -5,6 +5,8 @@
 int main(void) {
     srand(time(NULL));
 
+    Init_Database();
+
     // while (1) {
     //     U64 b = random_U64_with_more_1sBit();
     //     PrintBoard(b, stdout);
@@ -24,7 +26,23 @@ int main(void) {
 
     //Print_Pawn_Attacks("resources/Pawn_Attacks.txt");
 
-    Debug_GUI();
+    //Debug_GUI();
+
+    for (Square src = C6; src <= H3; src++)
+        for (Square des = A8; des <= H1; des++) {
+            system("clear");
+            U64 map = Draw_BB_Line(src, des);
+            printf("src = %s, des = %s\n\n", squares[src], squares[des]);
+            PrintBoard(map, stdout);
+            getchar();
+        }
+        // for (int i = 0; i < 8; i++) {
+        //     system("clear");
+        //     printf("Square = %s, direction = %s\n\n", squares[src], direction[i]);
+        //     PrintBoard(Sliders_Rays[src][i], stdout);
+        //     getchar();
+        // }
+
 
     return 0;
 }

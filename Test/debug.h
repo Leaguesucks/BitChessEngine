@@ -38,6 +38,11 @@ const char *squares[65] =
     "NQ"
 };
 
+const char *direction[9] =
+{
+    "NORTH", "NE", "EAST", "SE", "SOUTH", "SW", "WEST", "NW", "NOT_A_DIRECTION"
+};
+
 U64 random_U64(void) {
     U64 u1, u2, u3, u4;
     u1 = (U64)(random()) & 0xFFFF; u2 = (U64)(random()) & 0xFFFF;

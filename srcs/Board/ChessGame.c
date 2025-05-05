@@ -200,77 +200,75 @@ U8 Init_Game(BitBoard *bb, const char *fen) {
     return s1 && s2;
 }
 
-// U8 MovePiece(BitBoard *bb, const TNum Bpiece, const Square prev, const Square next) {
-//     U64 *cPos;        // Pointer to current position of the piece to move
-//     U64 *aPos;        // Pointer to the "all" position of the side of the piece to move
-//     U64 cAtk;         // Current attack map of this piece
-//     U64 cMove = 0ULL; // Current movement map (if any) of this piece
+U8 Handle_Promotion(BitBoard *bb, Square ProPos, PNum ProPiece) {
+    U8 side = bb->side2play;
 
-//     /* Pieces of opposite side are not supposed to move */
-//     if (bb->side2play == W && Bpiece > WKING || bb->side2play == B && Bpiece <= WKING)
-//         return 0;
+    if (ProPiece == PAWN || ProPiece == KING) // Obviously a pawn cannot be promoted to itself or his majesty
+        return 0;
 
-//     if (bb->side2play == W) {
-//         aPos = &(bb->pos_wAll);
+    /* Delete the promoted pawn */
+    bb->positions[side][PAWN] = PopBit(bb->positions[side][PAWN], ProPos);
+    bb->numPiece[side][PAWN]--;
 
-//         if (Bpiece == WPAWN) {
-//             cPos = &(bb->pos_wPawns);
-//             cMove = bb->moves_on_each_square[prev];
-//         }
-//         else if (Bpiece == WROOK)
-//             cPos = &(bb->pos_wRooks);
-//         else if (Bpiece == WKNIGHT)
-//             cPos = &(bb->pos_wKnights);
-//         else if (Bpiece == WBISHOP)
-//             cPos = &(bb->pos_wBishops);
-//         else if (Bpiece == WQUEEN)
-//             cPos = &(bb->pos_wQueens);
-//         else if (Bpiece == WKING) {
-//             cPos = &(bb->pos_wKing);
-//             cMove = bb->moves_on_each_square[prev];
-//         }
-//         else
-//             return 0;
-//     }
-//     else {
-//         aPos = &(bb->pos_bAll);
+    /* Transform the pawn to a new type */
+    bb->positions[side][ProPiece] = SetBit(bb->positions[side][ProPiece], ProPos);
+    bb->numPiece[side][ProPiece]++;
 
-//         if (Bpiece == BPAWN) {
-//             cPos = &(bb->pos_bPawns);
-//             cMove = bb->moves_on_each_square[prev];
-//         }
-//         else if (Bpiece == BROOK)
-//             cPos = &(bb->pos_bRooks);
-//         else if (Bpiece == BKNIGHT)
-//             cPos = &(bb->pos_bKnights);
-//         else if (Bpiece == BBISHOP)
-//             cPos = &(bb->pos_bBishops);
-//         else if (Bpiece == BQUEEN)
-//             cPos = &(bb->pos_bQueens);
-//         else if (Bpiece == BKING) {
-//             cPos = &(bb->pos_bKing);
-//             cMove = bb->moves_on_each_square[prev];
-//         }
-//         else
-//             return 0;
-//     }
+    return 1;
+}
+
+void Handle_Castling(BitBoard *bb, U8 cSide) {
+    U8 side  = bb->side2play;
     
-//     if (!GetBit(*cPos, prev)) // The current position of this piece cannot be found
-//         return 0;
+    Square kCastle;                                  // Castle square of the King
+    Square rCastle;                                  // Castle square of the Rook
+    Square rPos;                                     // Current position of the rook
+    U8 SetLow;                                       // The number that is used to set the castle bit low
+    
+    if (cSide == CASTLE_KING) {
+        if (side == WHITE) {
+            SetLow  = 1;
+            kCastle = WKING_CASTLE_SQUARE;
+        }
+        else {
+            SetLow = 4;
+            kCastle = BKING_CASTLE_SQUARE;
+        }
+        rCastle = kCastle - 1;
+        rPos    = kCastle + 3;
+    }
+    else {
+        if (side == WHITE) {
+            SetLow = 2;
+            kCastle = WQUEEN_CASTLE_SQUARE;
+        }
+        else {
+            SetLow = 8;
+            kCastle = BQUEEN_CASTLE_SQUARE;
+        }
+        rCastle = kCastle + 1;
+        rPos    = kCastle - 4;
+    }
 
-//     cAtk = bb->atk_on_each_square[prev];
+    /* Castling by moving the King and the Rook */
+    
+    /* Since there is only ONE King, there is no need for popping and setting a single bit */
+    bb->positions[side][KING] = SetBit(0ULL, kCastle);
+    
+    bb->positions[side][ROOK] = MoveBit(bb->positions[side][ROOK], rPos, rCastle);
+    
+    /* Set the corresponding castling bit low */
+    bb->castle_right &= ~SetLow;
+}
 
-//     if (!GetBit(cAtk, next) && !GetBit(cMove, next)) // The moved square is not legal
-//         return 0;
+// void Capture(BitBoard *bb, PNum piece, Square capPos) {
+//     U8 side = bb->side2play;
+//     U8 eside = !side;
 
-//     /* Move the piece to a new position */
-//     *cPos = PopBit(*cPos, prev);
-//     *cPos = SetBit(*cPos, next);
+    
+// }
 
-//     /* Update the new "all" position */
-//     *aPos = PopBit(*cPos, prev);
-//     *aPos = SetBit(*cPos, next);
-
-//     /* Swap the turn to a new side */
-//     bb->side2play *= -1;
+// U8 MovePiece(BitBoard *bb, PNum piece, Square oldPos, Square newPos, PNum (*promote_handler) (void*)) {
+//     U8 side = bb->side2play;
+//     U64 curPos = bb->positions[side][piece];
 // }

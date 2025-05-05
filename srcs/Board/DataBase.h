@@ -10,9 +10,6 @@
 #ifndef _DATABASE_H_
 #define _DATABASE_H_
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "BitBoard.h"
 #include "BitManipulation.h"
 

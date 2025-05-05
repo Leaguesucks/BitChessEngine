@@ -11,10 +11,13 @@
 #define _BITBOARD_H_
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <x86intrin.h> // C/C++ (GCC, Clang)
 
 #define REVERSE_ONE 0x8000000000000000ULL
 
-/* Edges of the board, defined as the first as last rank/file */
+/* Edges of the board, defined as the first and last rank/file */
 #define EDGES 0xff818181818181ffULL
 
 /* Defines the castling sequences squares
@@ -57,7 +60,7 @@ typedef enum Square {
 } Square;
 
 typedef enum Direction {
-    NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW
+    NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, NOT_A_DIRECTION
 } Direction;
 
 /* Chess pieces square identification */
@@ -77,7 +80,7 @@ typedef struct BitBoard {
     /* Cuurent number of each pieces on the chess board. 0 - 5 for White, 6 - 11 for Black */
     U8 numPiece[2][6];
 
-    /* Attack map on each square of the chess board */
+    /* Attack map on each square of the chess board. An "attack" means if an enemy is in the attack map, that enemy can be captured */
     U64 atk_on_each_square[64];
 
     /* Attack map of white and black pieces. 0 for Black, 1 for White */
@@ -85,17 +88,26 @@ typedef struct BitBoard {
 
     /* Covered squares of white and black. 0 for Black, 1 for White
      * Here, a "covered" squares means a squares that can be attacked by the allied piece, even if that square is occupied by another piece.
-     * => This is used to checked if it is valid for the King to attack a square
+     * => This is used to checked if it is valid for the King to moove to a square or capture a piece
      */
     U64 covered[2];
 
     /* All pawn & King moves map on each square of the chess board.
-     * Here, a "move" is defined as a movement that cannot capture any piece, such as a pawn move or a King castling
+     * Here, a "move" is defined as a movement that cannot capture any piece, such as a pawn move or a King castling.
      */
     U64 moves_on_each_square[64];
 
-    /* Pawn EnPassen for both side */
+    /* Pawn EnPassen attack squares for both side */
     U64 EnPassen;
+
+    /* The square that the allied pawn will end up after an EnPassen attacks.
+     *
+     * Index 1 (BLACK-WHITE): Which side is the Pawn on
+     * Index 2 (0-8): There are 8 pawns, each resides on a different file (There can only be a SINGLE pawn reside on each file of the EnPassen Rank)
+     * 
+     * Also, each pawn can only enpassen ONE enemy pawn at a time. Set to NOT_A_SQUARE when no EnPassen attacks can be founded
+     */
+    Square PostEnPassen[2][8];
 
     /* Castle right for both sides. From LSB to MSB, King -> Queen side for White -> Black 
      * e.g., 0b00001111 means both side has castle right to both King and Queen side
@@ -103,14 +115,14 @@ typedef struct BitBoard {
      */
     U8 castle_right;
 
-    /* If right now the King can castle then the corresponding square will be set to the position of the King after castling 
-     * -> 0 index for Black, 1 for White
-     * -> 0 sub-index for King castle, 1 for Queen Castle
-     */
-    Square castle_square[2][2];
-
     /* The pin positions of each side. If a piece is pin then it cannot move. 0 for Black, 1 for White */
     U64 pins[2];
+
+    /* Set to high if the King is being checked */
+    U8 checked[2];
+
+    /* The attack positions for each of the attacker (PAWN, ROOK, etc) to the King */
+    U64 checkedAttackers[2][5];
 
     /* Who to move. 0 for black and 1 for white */
     U8 side2play;

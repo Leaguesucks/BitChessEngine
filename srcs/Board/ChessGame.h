@@ -8,7 +8,6 @@
 #ifndef _CHESSGAME_H_
 #define _CHESSGAME_H_
 
-#include <string.h>
 #include "MoveGen.h"
 
 /* Begining positons of a chess game in FEN */
@@ -37,23 +36,50 @@ U8 FEN_Decode(BitBoard *bb, const char *fen);
  */
 U8 Init_Game(BitBoard *bb, const char *fen);
 
-/* Handle moving a piece to a new position 
+/* Handle when a Pawn wants promotion. Promotion detection is donw outside of this function
  *
- * Para: bb     -> THe bit board
- *       Bpiece -> What piece and side of the piece to move
- *       prev   -> The current position of this piece
- *       new    -> The position to move this piece to
+ * Para: bb       -> The bit board
+ *       ProPos   -> Promote position, which is the square of the last rank that this pawn reaches
+ *       ProPiece -> What piece to promote into 
  * 
- * Return: 0 if this piece cannot be moved, else nonzero
+ * Return: nonzero and update the bitboard accordingly if suceed, zero otherwise
  */
-//U8 MovePiece(BitBoard *bb, const TNum Bpiece, const Square prev, const Square next);
+U8 Handle_Promotion(BitBoard *bb, Square ProPos, PNum ProPiece);
 
-/* Update and sum up all information of the bit board, such as number of each piece, general positions on
- * each side, etc
- * => SHould be called last after the board is updated
- * 
- * Para: bb -> The bitboard to sum up and updated
+/* Handle when a King wants to castle. Castling detection is done outside of this function 
+ *
+ * Para: bb    -> The bit board
+ *       cSide -> The castling side
+ *       
+ * Note: The check for the possibility of castling is done outside of this function, so no return
+ *       for verification is needed
  */
-//void Update_And_Summarize_Board(BitBoard *bb);
+void Handle_Castling(BitBoard *bb, U8 cSide);
+
+/* Handle capturing a piece. The condition to capture should have already been done outside of this
+ * function. If an enemy piece can be captured, then simply eliminate the that enemy piece. Note that
+ * this function only check if an enemy piece has been captured. It doesn't move the attack piece or 
+ * does any checking or further action
+ *
+ * Para: bb     -> The bit board
+ *       piece  -> What attacking piece it is
+ *       capPos -> The capturing position 
+ */
+void Capture(BitBoard *bb, PNum piece, Square capPos);
+
+/* Handle moving a piece from one position to another on the chessboard. This function need to call
+ * an outside defined function to handle the pawn promotion
+ *
+ * Para: bb              -> The bit board
+ *       piece           -> What piece to move
+ *       oldPos          -> Current position of this piece
+ *       newPos          -> The new position to move this piece to
+ *       promote_handler -> A promotion handler the promotion event to the user. Whatever the inputs
+ *                          this function may take, the return should be what kind of piece the user
+ *                          wants to promote their pawn into
+ * 
+ * Return: nonzero if suceed, zero otherwise
+ */
+U8 MovePiece(BitBoard *bb, PNum piece, Square oldPos, Square newPos, PNum (*promote_handler) (void*));
 
 #endif
